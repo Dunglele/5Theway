@@ -605,6 +605,39 @@ header {
     background: #f8f6f1;
 }
 
+/* Layout đặc biệt cho phần Feature + Grid */
+.feature-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.feature-layout__left {
+    flex: 0 0 calc(50% - 10px);
+    max-width: calc(50% - 10px);
+}
+
+.feature-layout__right {
+    flex: 0 0 calc(50% - 10px);
+    max-width: calc(50% - 10px);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 991px) {
+    .feature-layout__left, .feature-layout__right {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 575px) {
+    .feature-layout__right {
+        gap: 12px;
+    }
+}
+
 /* Feature card (large banner) */
 .product-feature-card {
     position: relative;
@@ -613,7 +646,8 @@ header {
     cursor: pointer;
     display: block;
     height: 100%;
-    min-height: 360px;
+    min-height: 480px;
+    background: #f0ede6;
 }
 
     .product-feature-card img {
@@ -1491,18 +1525,19 @@ header {
 .products-grid {
     display: grid;
     gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
     .products-grid.grid-4 {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     }
 
     .products-grid.grid-3 {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     }
 
     .products-grid.grid-2 {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     }
 
     /* List view */
