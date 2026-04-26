@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>_5theway</title>
+    <meta name="description" content="DEAL SÂU chưa từng có tại 5THEWAY® OUTLET™ — Thời trang streetwear chính hãng, deal tốt nhất." />
+    <meta property="og:title" content="5THEWAY® OUTLET™" />
+    <meta property="og:description" content="DEAL SÂU chưa từng có tại 5THEWAY® OUTLET™" />
+    <meta property="og:image" content="https://cdn.kiotvietweb.vn/merchant/1fb4ae1f6d40d69dfa13e50dcfeb6e6c/other/1728460268/banner_sEO.png" />
+
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Swiper -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <!-- Favicon -->
+    <link rel="icon" href="https://cdn.kiotvietweb.vn/merchant/1fb4ae1f6d40d69dfa13e50dcfeb6e6c/other/1727077332/2800ac8379e2eb3b3aef8563064141dc.jpeg" />
+</head>
+<body>
+
+<!-- ===== ANNOUNCEMENT BAR ===== -->
+<div class="announce-bar">
+  <span class="announce-bar__scroll">
+    🖤 DEAL SÂU CHƯA TỪNG CÓ &nbsp;—&nbsp; FREE SHIP ĐƠN TỪ 500K &nbsp;—&nbsp; 5THEWAY® OUTLET™ RA MẮT CHÍNH THỨC &nbsp;—&nbsp; MUA 1 TẶNG 1 NHIỀU SẢN PHẨM &nbsp;—&nbsp; 🔥 DEAL SÂU CHƯA TỪNG CÓ &nbsp;—&nbsp; FREE SHIP ĐƠN TỪ 500K &nbsp;—&nbsp; 5THEWAY® OUTLET™
+  </span>
+</div>
+
+<!-- ===== OVERLAY ===== -->
+<div class="overlay" id="overlay"></div>
+
+<!-- ===== MOBILE MENU ===== -->
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Menu điều hướng">
+    <button class="mobile-menu__close" id="menuClose" aria-label="Đóng menu">&times;</button>
+    <ul class="mobile-menu__links">
+        <li><a th:href="@{/Home/Tops}">TOPS</a></li>
+        <li><a href="#">HOODIES</a></li>
+        <li><a href="#">JACKETS</a></li>
+        <li><a href="#">ACCESSORIES</a></li>
+        <li><a href="#">OUTLET</a></li>
+        <li><a href="#">VỀ CHÚNG TÔI</a></li>
+    </ul>
+</div>
+
+<!-- ===== SEARCH OVERLAY ===== -->
+<div class="search-overlay" id="searchOverlay" role="search">
+    <form th:action="@{/Home/Search}" method="get" style="width: 100%; max-width: 800px; display: flex;">
+        <input type="text" name="keyword" class="search-input" placeholder="Tìm sản phẩm…" aria-label="Tìm kiếm sản phẩm" required />
+    </form>
+    <button class="search-close" id="searchClose" aria-label="Đóng tìm kiếm">&times;</button>
+</div>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar-5w" aria-label="Điều hướng chính">
+    <div class="container-xl px-3 px-md-4">
+
+        <!-- Hamburger (mobile) -->
+        <button class="navbar-toggler-5w" id="menuToggle" aria-label="Mở menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- Logo -->
+        <a href="/" class="navbar-logo">
+            <img
+                    src="https://cdn.kiotvietweb.vn/merchant/1fb4ae1f6d40d69dfa13e50dcfeb6e6c/other/1725866622/OUTLETTRANG.png"
+                    alt="5THEWAY® OUTLET™"
+                    loading="eager"
+            />
+        </a>
+
+        <!-- Nav links (desktop) -->
+        <ul class="navbar-links d-none d-lg-flex">
+            <li><a th:href="@{/Home/Tops}">TOPS</a></li>
+            <li><a th:href="@{/Home/Hoodies}">HOODIES</a></li>
+            <li><a th:href="@{/Home/Jackets}">JACKETS</a></li>
+            <li><a th:href="@{/Home/Accessories}">ACCESSORIES</a></li>
+            <li><a th:href="@{/Home/Outlet}" style="color:#ffb347;">OUTLET</a></li>
+            <li><a th:href="@{/Home/News}" style="color:#ffb347;">NEWS</a></li>
+        </ul>
+
+        <!-- Actions -->
+        <div class="navbar-actions">
+            <!-- Search -->
+            <button class="nav-btn" id="searchToggle" aria-label="Tìm kiếm">
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                </svg>
+            </button>
+
+            <!-- Account & Auth -->
+            <div class="dropdown d-inline-block">
+                <button class="nav-btn dropdown-toggle" id="accountDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; gap: 8px;">
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <!-- Hiện tên nếu đã login -->
+                    <span sec:authorize="isAuthenticated()" class="d-none d-md-inline" style="font-weight: 600; font-size: 0.85rem;" sec:authentication="name">User</span>
+                </button>
+                
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdown" style="border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: none; margin-top: 10px; padding: 10px 0;">
+                    <!-- Menu khi chưa đăng nhập -->
+                    <div sec:authorize="!isAuthenticated()">
+                        <div class="dropdown-header text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px; color: #999;">Khách hàng</div>
+                        <a class="dropdown-item py-2" th:href="@{/login}" style="font-size: 0.9rem;">Đăng nhập</a>
+                        <a class="dropdown-item py-2" th:href="@{/register}" style="font-size: 0.9rem;">Đăng ký tài khoản</a>
+                    </div>
+
+                    <!-- Menu khi đã đăng nhập -->
+                    <div sec:authorize="isAuthenticated()">
+                        <div class="dropdown-header text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px; color: #999;">Thành viên</div>
+                        <a class="dropdown-item py-2" th:href="@{/Home/Profile}" style="font-size: 0.9rem;">Thông tin cá nhân</a>
+                        <a class="dropdown-item py-2" th:href="@{/Home/Orders}" style="font-size: 0.9rem;">Lịch sử đơn hàng</a>
+                        <div sec:authorize="hasAuthority('ROLE_ADMIN')">
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item py-2 text-primary" th:href="@{/admin}" style="font-size: 0.9rem; font-weight: 600;">Quản trị hệ thống</a>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="dropdown-item py-2 text-danger" style="font-size: 0.9rem; font-weight: 600;">Đăng xuất</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cart -->
+            <a th:href="@{/Home/Cart}" class="nav-btn" aria-label="Giỏ hàng" style="position:relative; text-decoration: none;">
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+                <span class="cart-badge" th:text="${cartCount}">0</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== NOTIFICATIONS ===== -->
+<div class="container-xl" style="position: fixed; top: 90px; right: 20px; z-index: 10000; max-width: 350px;">
+    <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show shadow-lg" role="alert" style="border-radius: 10px; border: none; background: #28a745; color: #fff;">
+        <strong th:text="${successMsg}"></strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" style="color: #fff; opacity: 1;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show shadow-lg" role="alert" style="border-radius: 10px; border: none; background: #dc3545; color: #fff;">
+        <strong th:text="${errorMsg}"></strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" style="color: #fff; opacity: 1;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+
+<section layout:fragment="content">
+    &lt;!&ndash; Content will be replaced by each specific page &ndash;&gt;
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer-5w">
+    <div class="container-xl px-3 px-md-4">
+        <div class="row g-4 g-lg-5">
+
+            <!-- Brand col -->
+            <div class="col-12 col-md-5 col-lg-4">
+                <div class="footer-logo">
+                    <img
+                            src="https://cdn.kiotvietweb.vn/merchant/1fb4ae1f6d40d69dfa13e50dcfeb6e6c/other/1725866622/OUTLETTRANG.png"
+                            alt="5THEWAY® OUTLET™"
+                            loading="lazy"
+                    />
+                </div>
+                <p class="footer-tagline">
+                    THƯƠNG HIỆU KHÔNG CÓ LOGO — chỉ là BIỂU TƯỢNG CÔNG KHAI™ của 5THEWAY®
+                </p>
+
+                <div class="footer-contact-item">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.69a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <a href="tel:0934840505">093 484 0505</a>
+                </div>
+
+                <div class="footer-contact-item">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <a href="mailto:5thewayvietnam@gmail.com">5thewayvietnam@gmail.com</a>
+                </div>
+
+                <div class="footer-contact-item" style="align-items:flex-start;">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-top:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>80 Đường 16, Cư xá Lữ Gia, P.15, Q.11, TP.HCM</span>
+                </div>
+
+                <div class="footer-social" aria-label="Mạng xã hội">
+                    <a href="https://www.facebook.com/5theway" class="social-btn" target="_blank" rel="noopener" aria-label="Facebook">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a href="#" class="social-btn" aria-label="Instagram">
+                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="tel:0934840505" class="social-btn" aria-label="Zalo">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><text y="16" font-size="12" font-family="monospace">Z</text></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="col-6 col-md-3 col-lg-2">
+                <h4 class="footer-heading">Sản phẩm</h4>
+                <ul class="footer-links">
+                    <li><a href="#">TOPS</a></li>
+                    <li><a href="#">HOODIES</a></li>
+                    <li><a href="#">COATS &amp; JACKETS</a></li>
+                    <li><a href="#">DROP SHOULDER</a></li>
+                    <li><a href="#">NEW TEE</a></li>
+                    <li><a href="#">ACCESSORIES</a></li>
+                </ul>
+            </div>
+
+            <!-- Info -->
+            <div class="col-6 col-md-3 col-lg-2">
+                <h4 class="footer-heading">Thông tin</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Về chúng tôi</a></li>
+                    <li><a href="#">Chính sách giao hàng</a></li>
+                    <li><a href="#">Chính sách đổi trả</a></li>
+                    <li><a href="#">Hướng dẫn size</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                </ul>
+            </div>
+
+            <!-- Map / Banner -->
+            <div class="col-12 col-lg-4">
+                <h4 class="footer-heading">Hình ảnh cửa hàng</h4>
+                <div style="border-radius:var(--radius-lg);overflow:hidden;">
+                    <img
+                            src="https://cdn.kiotvietweb.vn/merchant/1fb4ae1f6d40d69dfa13e50dcfeb6e6c/cropped/1716809054/crop-file.webp"
+                            alt="5THEWAY OUTLET store"
+                            loading="lazy"
+                            style="width:100%;height:200px;object-fit:cover;"
+                    />
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer bottom -->
+        <div class="footer-bottom">
+            <p>&copy; 2024 5THEWAY® OUTLET™ — NO LOGO BRAND just PUBLIC ICON™</p>
+            <p>Phát triển bởi KiotVietWeb</p>
+        </div>
+    </div>
+</footer>
+
+<!-- ===== SCRIPTS ===== -->
+<!-- jQuery and Popper.js (Required for Bootstrap 4 Dropdowns) -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script th:src="@{/assets/script.js}"></script>
+<th:block layout:fragment="scripts"></th:block>
+</body>
+</html>

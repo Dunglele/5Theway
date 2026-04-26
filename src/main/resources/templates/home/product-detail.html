@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${product.name} + ' - _5theway'"></title>
+    <style>
+        .product-detail-container { padding: 120px 0 60px; }
+        .product-main-img { width: 100%; max-width: 450px; display: block; margin: 0 auto; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .product-info-wrap { padding-left: 40px; }
+        .product-category-label { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; }
+        .product-name-detail { font-family: 'Bebas Neue', cursive; font-size: 3.5rem; line-height: 1; margin-bottom: 20px; }
+        .product-price-detail { font-size: 2rem; font-weight: 700; color: #000; margin-bottom: 15px; }
+        .product-short-desc { font-size: 1.1rem; color: #333; font-weight: 500; margin-bottom: 20px; font-style: italic; }
+        .product-desc-detail { color: #666; line-height: 1.8; margin-bottom: 40px; font-size: 1rem; border-top: 1px solid #eee; padding-top: 20px; }
+        .stock-status { font-size: 0.9rem; margin-bottom: 20px; font-weight: 600; }
+        .stock-in { color: #28a745; }
+        .stock-out { color: #dc3545; }
+        .qty-input-wrap { display: flex; align-items: center; margin-bottom: 30px; }
+        .qty-btn { width: 40px; height: 40px; border: 1px solid #ddd; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+        .qty-btn:hover { background: #f5f5f5; }
+        .qty-val { width: 60px; height: 40px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; border-left: none; border-right: none; text-align: center; font-weight: 600; }
+        .btn-add-to-cart-lg { background: #000; color: #fff; border: none; padding: 15px 40px; border-radius: 8px; font-weight: 600; letter-spacing: 1px; transition: all 0.3s; width: 100%; max-width: 300px; }
+        .btn-add-to-cart-lg:hover { background: #333; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .related-section { border-top: 1px solid #eee; padding-top: 60px; margin-top: 60px; }
+        .review-item { border-bottom: 1px solid #eee; padding: 20px 0; }
+        .star-rating { color: #ffb347; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <main class="product-detail-container">
+        <div class="container-xl">
+            <div class="row">
+                <!-- Image Col -->
+                <div class="col-md-6">
+                    <img th:src="${product.mainImageUrl}" th:alt="${product.name}" class="product-main-img" />
+                </div>
+                
+                <!-- Info Col -->
+                <div class="col-md-6">
+                    <div class="product-info-wrap">
+                        <span class="product-category-label" th:text="${product.category.name}">CATEGORY</span>
+                        <h1 class="product-name-detail" th:text="${product.name}">Tên sản phẩm</h1>
+                        
+                        <div class="product-price-detail">
+                            <span th:text="${#numbers.formatDecimal(product.salePrice != null ? product.salePrice : product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                            <span th:if="${product.salePrice != null}" style="text-decoration: line-through; color: #999; font-size: 1.5rem; margin-left: 15px;" th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                        </div>
+
+                        <div class="product-short-desc" th:if="${product.shortDescription != null}" th:text="${product.shortDescription}">
+                            Mô tả ngắn về sản phẩm.
+                        </div>
+
+                        <div class="stock-status" th:classappend="${product.stock > 0 ? 'stock-in' : 'stock-out'}">
+                            <span th:if="${product.stock > 0}">● CÒN HÀNG (<span th:text="${product.stock}">0</span> sản phẩm)</span>
+                            <span th:unless="${product.stock > 0}">● HẾT HÀNG</span>
+                        </div>
+
+                        <p class="product-desc-detail" th:text="${product.description}">
+                            Mô tả sản phẩm chi tiết sẽ hiển thị tại đây. Đây là một sản phẩm chất lượng cao của 5THEWAY.
+                        </p>
+
+                        <div th:if="${product.stock > 0}">
+                            <form th:action="@{/Home/Cart/Add}" method="post">
+                                <input type="hidden" name="productId" th:value="${product.id}">
+                                <div class="qty-input-wrap">
+                                    <button type="button" class="qty-btn" onclick="changeQty(-1)">-</button>
+                                    <input type="text" id="quantity" name="quantity" value="1" class="qty-val" readonly />
+                                    <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+                                </div>
+                                
+                                <button type="submit" class="btn-add-to-cart-lg">
+                                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right: 10px; margin-top: -3px;">
+                                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                                    </svg>
+                                    THÊM VÀO GIỎ HÀNG
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Products -->
+            <div class="related-section">
+                <div class="section-header">
+                    <div>
+                        <p class="section-subtitle">Có thể bạn sẽ thích</p>
+                        <h2 class="section-title" style="font-size: 2rem;">SẢN PHẨM LIÊN QUAN</h2>
+                    </div>
+                </div>
+                
+                <div class="row g-3">
+                    <th:block th:each="p : ${relatedProducts}" th:if="${p.id != product.id}">
+                        <div class="col-6 col-sm-4 col-lg-3">
+                            <article class="product-card">
+                                <a th:href="@{'/Home/Product/' + ${p.id}}" class="product-card__img-wrap d-block">
+                                    <img th:src="${p.mainImageUrl}" th:alt="${p.name}" loading="lazy" />
+                                </a>
+                                <div class="product-card__body">
+                                    <h3 class="product-card__name" th:text="${p.name}">Product Name</h3>
+                                    <div class="product-card__price-row">
+                                        <span class="product-card__price" th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="related-section">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h4 class="mb-4" style="font-weight: 700;">ĐÁNH GIÁ TỪ KHÁCH HÀNG</h4>
+                        <div th:if="${#lists.isEmpty(reviews)}" class="text-muted">Chưa có đánh giá nào cho sản phẩm này.</div>
+                        
+                        <div th:each="rev : ${reviews}" class="review-item">
+                            <div class="d-flex justify-content-between mb-2">
+                                <strong th:text="${rev.customerName}">Tên khách hàng</strong>
+                                <span class="text-muted small" th:text="${#temporals.format(rev.createdAt, 'dd/MM/yyyy')}">Date</span>
+                            </div>
+                            <div class="star-rating mb-2">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                    <span th:if="${i <= rev.rating}">★</span>
+                                    <span th:unless="${i <= rev.rating}" style="color:#ddd;">★</span>
+                                </span>
+                            </div>
+                            <p class="mb-0" th:text="${rev.content}">Nội dung bình luận.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-5">
+                        <div class="card p-4 bg-light" sec:authorize="isAuthenticated()">
+                            <h5 class="mb-3" style="font-weight: 700;">GỬI ĐÁNH GIÁ CỦA BẠN</h5>
+                            <form th:action="@{/Home/Product/Review}" method="post">
+                                <input type="hidden" name="productId" th:value="${product.id}">
+                                <div class="form-group mb-3">
+                                    <label class="small font-weight-bold">Số sao đánh giá</label>
+                                    <select name="rating" class="form-control">
+                                        <option value="5">5 Sao - Rất tốt</option>
+                                        <option value="4">4 Sao - Tốt</option>
+                                        <option value="3">3 Sao - Bình thường</option>
+                                        <option value="2">2 Sao - Kém</option>
+                                        <option value="1">1 Sao - Rất kém</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="small font-weight-bold">Nội dung bình luận</label>
+                                    <textarea name="content" class="form-control" rows="4" placeholder="Chia sẻ cảm nhận của bạn..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-dark w-100 py-2" style="font-weight: 600;">GỬI ĐÁNH GIÁ</button>
+                            </form>
+                        </div>
+                        <div class="card p-4 text-center" sec:authorize="!isAuthenticated()">
+                            <p class="mb-0">Vui lòng <a th:href="@{/login}" class="font-weight-bold text-dark">đăng nhập</a> để gửi đánh giá.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</section>
+
+<th:block layout:fragment="scripts">
+    <script>
+        function changeQty(amt) {
+            let val = parseInt(document.getElementById('quantity').value);
+            val += amt;
+            if (val < 1) val = 1;
+            // Check stock limit (max)
+            let maxStock = [[${product.stock}]];
+            if (val > maxStock) val = maxStock;
+            document.getElementById('quantity').value = val;
+        }
+    </script>
+</th:block>
+</body>
+</html>

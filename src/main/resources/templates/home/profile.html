@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Trang cá nhân - _5theway</title>
+    <style>
+        .profile-page { padding: 120px 0 80px; }
+        .profile-title { font-family: 'Bebas Neue', cursive; font-size: 3rem; letter-spacing: 2px; margin-bottom: 40px; }
+        .profile-card { background: #f9f9f9; border-radius: 15px; padding: 40px; border: 1px solid #eee; }
+        .info-group { margin-bottom: 25px; }
+        .info-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #999; margin-bottom: 5px; display: block; }
+        .info-value { font-size: 1.1rem; font-weight: 600; color: #000; }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <main class="profile-page">
+        <div class="container">
+            <h1 class="profile-title">TRANG CÁ NHÂN</h1>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="profile-card">
+                        <div class="info-group">
+                            <span class="info-label">Tên đăng nhập</span>
+                            <div class="info-value" sec:authentication="name">Username</div>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Quyền hạn</span>
+                            <div class="info-value" sec:authentication="authorities">Roles</div>
+                        </div>
+                        <hr class="my-4">
+                        <p class="text-muted italic">Tính năng cập nhật thông tin cá nhân đang được phát triển.</p>
+                        <div class="mt-4">
+                            <a th:href="@{/Home/Orders}" class="btn btn-dark px-4 py-2" style="border-radius: 8px; font-weight: 600;">XEM LỊCH SỬ ĐƠN HÀNG</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</section>
+</body>
+</html>

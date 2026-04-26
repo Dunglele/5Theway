@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Lịch sử đơn hàng - _5theway</title>
+    <style>
+        .orders-page { padding: 120px 0 80px; }
+        .orders-title { font-family: 'Bebas Neue', cursive; font-size: 3rem; letter-spacing: 2px; margin-bottom: 40px; }
+        .order-card { background: #f9f9f9; border-radius: 12px; padding: 25px; margin-bottom: 20px; border: 1px solid #eee; transition: all 0.3s; }
+        .order-card:hover { border-color: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .order-id { font-weight: 700; font-size: 1.1rem; }
+        .order-status { padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-other { background: #e2e3e5; color: #383d41; }
+        .order-body { display: flex; justify-content: space-between; }
+        .order-info p { margin-bottom: 5px; font-size: 0.9rem; color: #666; }
+        .order-amount { font-weight: 700; font-size: 1.2rem; color: #000; }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <main class="orders-page">
+        <div class="container-xl">
+            <h1 class="orders-title">LỊCH SỬ ĐƠN HÀNG</h1>
+
+            <div th:if="${#lists.isEmpty(orders)}" class="text-center" style="padding: 100px 0;">
+                <h3 class="text-muted">Bạn chưa đặt đơn hàng nào.</h3>
+                <a href="/" class="btn btn-dark mt-4 px-5 py-3">BẮT ĐẦU MUA SẮM</a>
+            </div>
+
+            <div th:each="order : ${orders}" class="order-card">
+                <div class="order-header">
+                    <span class="order-id" th:text="'ĐƠN HÀNG #' + ${order.id}">#1</span>
+                    <span class="order-status" 
+                          th:classappend="${order.status == 'PENDING' ? 'status-pending' : (order.status == 'COMPLETED' ? 'status-completed' : 'status-other')}"
+                          th:text="${order.status}">
+                        PENDING
+                    </span>
+                </div>
+                <div class="order-body">
+                    <div class="order-info">
+                        <p><strong>Ngày đặt:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
+                        <p><strong>Người nhận:</strong> <span th:text="${order.fullName}"></span></p>
+                        <p><strong>Địa chỉ:</strong> <span th:text="${order.shippingAddress}"></span></p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-muted small mb-1">Tổng thanh toán</p>
+                        <div class="order-amount" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</section>
+</body>
+</html>

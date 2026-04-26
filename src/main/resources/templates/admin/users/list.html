@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Người dùng - Admin</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="font-family: 'Bebas Neue', cursive; font-size: 2.5rem;">QUẢN LÝ NGƯỜI DÙNG</h2>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="pl-4">ID</th>
+                        <th>Tên đăng nhập</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Trạng thái</th>
+                        <th class="text-right pr-4">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td class="pl-4" th:text="${user.id}">1</td>
+                        <td th:text="${user.username}" style="font-weight: 600;">username</td>
+                        <td th:text="${user.fullName}">fullName</td>
+                        <td th:text="${user.email}">email</td>
+                        <td>
+                            <span th:if="${user.enabled}" class="badge badge-success">Đang hoạt động</span>
+                            <span th:unless="${user.enabled}" class="badge badge-danger">Đã bị khóa</span>
+                        </td>
+                        <td class="text-right pr-4">
+                            <a th:href="@{'/admin/users/toggle/' + ${user.id}}" 
+                               class="btn btn-sm" 
+                               th:classappend="${user.enabled ? 'btn-outline-danger' : 'btn-outline-success'}"
+                               th:text="${user.enabled ? 'Khóa' : 'Mở khóa'}">
+                                Thao tác
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

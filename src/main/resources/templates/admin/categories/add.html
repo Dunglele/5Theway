@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Thêm danh mục - Admin</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="mb-4">
+        <a th:href="@{/admin/categories}" class="text-dark" style="font-weight: 600;">← QUAY LẠI DANH SÁCH</a>
+        <h2 class="mt-2" style="font-family: 'Bebas Neue', cursive; font-size: 2.5rem;">THÊM DANH MỤC MỚI</h2>
+    </div>
+
+    <div class="card p-4">
+        <form th:action="@{/admin/categories/save}" th:object="${category}" method="post">
+            <div class="form-group mb-3">
+                <label for="name" style="font-weight: 600;">Tên danh mục</label>
+                <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="Ví dụ: TOPS, HOODIES" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="slug" style="font-weight: 600;">Slug (đường dẫn)</label>
+                <input type="text" id="slug" th:field="*{slug}" class="form-control" placeholder="ví-du-tops" required>
+                <small class="form-text text-muted">Dùng để hiển thị trên URL. Ví dụ: /Home/Tops</small>
+            </div>
+            <div class="form-group mb-4">
+                <label for="description" style="font-weight: 600;">Mô tả</label>
+                <textarea id="description" th:field="*{description}" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-dark" style="padding: 12px 30px; border-radius: 8px; font-weight: 600;">LƯU DANH MỤC</button>
+        </form>
+    </div>
+</section>
+</body>
+</html>

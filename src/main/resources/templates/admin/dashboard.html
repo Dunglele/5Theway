@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Dashboard - Admin</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <h2 class="mb-4" style="font-family: 'Bebas Neue', cursive; font-size: 2.5rem;">DASHBOARD</h2>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card p-4 bg-white">
+                <h5 class="text-muted" style="font-size: 0.9rem;">TỔNG SẢN PHẨM</h5>
+                <h3 th:text="${totalProducts}" style="font-weight: 700;">0</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 bg-white">
+                <h5 class="text-muted" style="font-size: 0.9rem;">ĐƠN HÀNG MỚI</h5>
+                <h3 style="font-weight: 700;">0</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 bg-white">
+                <h5 class="text-muted" style="font-size: 0.9rem;">DOANH THU (VNĐ)</h5>
+                <h3 style="font-weight: 700;">0</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <div class="card p-4">
+            <h5>Chào mừng quay lại, Admin!</h5>
+            <p class="text-muted">Hệ thống đang hoạt động ổn định. Bạn có thể bắt đầu quản lý danh mục và sản phẩm từ Sidebar bên trái.</p>
+        </div>
+    </div>
+</section>
+</body>
+</html>

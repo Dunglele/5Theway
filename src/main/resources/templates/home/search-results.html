@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Kết quả tìm kiếm - _5theway</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <main style="padding: 120px 0 60px;">
+        <div class="container-xl">
+            <div class="section-header">
+                <div>
+                    <p class="section-subtitle">Tìm kiếm</p>
+                    <h2 class="section-title" style="font-size: 2rem;">KẾT QUẢ CHO: "<span th:text="${keyword}"></span>"</h2>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(products)}" class="text-center" style="padding: 100px 0;">
+                <h3 class="text-muted">Không tìm thấy sản phẩm nào phù hợp.</h3>
+                <a href="/" class="btn btn-dark mt-4">QUAY LẠI TRANG CHỦ</a>
+            </div>
+
+            <div class="row g-3" th:unless="${#lists.isEmpty(products)}">
+                <th:block th:each="product : ${products}">
+                    <div class="col-6 col-sm-4 col-lg-3">
+                        <article class="product-card">
+                            <a th:href="@{'/Home/Product/' + ${product.id}}" class="product-card__img-wrap d-block">
+                                <img th:src="${product.mainImageUrl}" th:alt="${product.name}" loading="lazy" />
+                            </a>
+                            <div class="product-card__body">
+                                <h3 class="product-card__name" th:text="${product.name}">Product Name</h3>
+                                <div class="product-card__price-row">
+                                    <span class="product-card__price" th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                                </div>
+                            </div>
+                            <div class="product-card__footer">
+                                <button class="btn-add-cart">Chọn mua</button>
+                            </div>
+                        </article>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+    </main>
+</section>
+</body>
+</html>

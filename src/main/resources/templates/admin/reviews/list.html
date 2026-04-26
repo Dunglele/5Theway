@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Quản lý đánh giá - Admin</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="font-family: 'Bebas Neue', cursive; font-size: 2.5rem;">QUẢN LÝ ĐÁNH GIÁ</h2>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="pl-4">ID</th>
+                        <th>Sản phẩm</th>
+                        <th>Người dùng</th>
+                        <th>Đánh giá</th>
+                        <th>Nội dung</th>
+                        <th>Ngày gửi</th>
+                        <th class="text-right pr-4">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="review : ${reviews}">
+                        <td class="pl-4" th:text="${review.id}">1</td>
+                        <td th:text="${review.product.name}" style="font-weight: 600; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Product</td>
+                        <td th:text="${review.customerName}">User</td>
+                        <td>
+                            <span class="text-warning" th:each="i : ${#numbers.sequence(1, 5)}">
+                                <span th:if="${i <= review.rating}">★</span>
+                                <span th:unless="${i <= review.rating}" style="color: #ddd;">★</span>
+                            </span>
+                        </td>
+                        <td th:text="${review.content}" style="max-width: 300px;">Nội dung bình luận</td>
+                        <td th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">Date</td>
+                        <td class="text-right pr-4">
+                            <a th:href="@{'/admin/reviews/delete/' + ${review.id}}" 
+                               class="btn btn-sm btn-outline-danger" 
+                               onclick="return confirm('Xác nhận xóa đánh giá này?')">Xóa</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

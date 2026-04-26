@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="vi" layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Tops - _5theway</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <!-- NEWS HERO / MASTHEAD -->
+    <section class="nw-masthead">
+        <div class="container-xl px-3 px-md-4">
+            <div class="nw-masthead__inner">
+                <div class="nw-masthead__left">
+                    <p class="nw-masthead__label">
+                        <span class="nw-label-dot"></span>
+                        5THEWAY® EDITORIAL
+                    </p>
+                    <h1 class="nw-masthead__title">NEWS &amp; STYLE</h1>
+                    <p class="nw-masthead__sub">Streetwear · Lookbook · Deal alerts · How-to-wear</p>
+                </div>
+                <div class="nw-masthead__right">
+                    <div class="nw-search-bar">
+                        <label for="newsSearch" class="visually-hidden"></label>
+                        <input type="search" id="newsSearch" class="nw-search-input" placeholder="Tìm bài viết…" autocomplete="off" />
+                        <button class="nw-search-btn" aria-label="Tìm kiếm">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                        </button>
+                    </div>
+                    <div class="nw-masthead__stats">
+                        <div class="nw-stat"><span class="nw-stat__num">48</span><span class="nw-stat__lbl">Bài viết</span></div>
+                        <div class="nw-stat-sep"></div>
+                        <div class="nw-stat"><span class="nw-stat__num">6</span><span class="nw-stat__lbl">Chủ đề</span></div>
+                        <div class="nw-stat-sep"></div>
+                        <div class="nw-stat"><span class="nw-stat__num">2024</span><span class="nw-stat__lbl">Mùa hiện tại</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Decorative ticker -->
+        <div class="nw-ticker">
+            <div class="nw-ticker__track">
+                <span>STREETWEAR</span><span class="nw-tick-dot">✦</span>
+                <span>LOOKBOOK 2024</span><span class="nw-tick-dot">✦</span>
+                <span>STYLE GUIDE</span><span class="nw-tick-dot">✦</span>
+                <span>DEAL ALERTS</span><span class="nw-tick-dot">✦</span>
+                <span>SHEEPSMAN DROP</span><span class="nw-tick-dot">✦</span>
+                <span>HOW TO WEAR</span><span class="nw-tick-dot">✦</span>
+                <span>OUTFIT IDEAS</span><span class="nw-tick-dot">✦</span>
+                <span>STREETWEAR</span><span class="nw-tick-dot">✦</span>
+                <span>LOOKBOOK 2024</span><span class="nw-tick-dot">✦</span>
+                <span>STYLE GUIDE</span><span class="nw-tick-dot">✦</span>
+                <span>DEAL ALERTS</span><span class="nw-tick-dot">✦</span>
+                <span>SHEEPSMAN DROP</span><span class="nw-tick-dot">✦</span>
+                <span>HOW TO WEAR</span><span class="nw-tick-dot">✦</span>
+                <span>OUTFIT IDEAS</span><span class="nw-tick-dot">✦</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORY FILTER BAR -->
+    <div class="nw-filter-bar" id="nwFilterBar">
+        <div class="container-xl px-3 px-md-4">
+            <div class="nw-filter-bar__inner">
+                <div class="nw-cats" id="nwCats" role="tablist" aria-label="Lọc theo chủ đề">
+                    <button class="nw-cat active" data-cat="all" role="tab" aria-selected="true">Tất cả</button>
+                    <button class="nw-cat" data-cat="lookbook" role="tab" aria-selected="false">Lookbook</button>
+                    <button class="nw-cat" data-cat="style-guide" role="tab" aria-selected="false">Style Guide</button>
+                    <button class="nw-cat" data-cat="deal" role="tab" aria-selected="false">Deal &amp; Sale</button>
+                    <button class="nw-cat" data-cat="brand" role="tab" aria-selected="false">Về thương hiệu</button>
+                    <button class="nw-cat" data-cat="streetwear" role="tab" aria-selected="false">Streetwear</button>
+                    <button class="nw-cat" data-cat="howto" role="tab" aria-selected="false">How-to-wear</button>
+                </div>
+                <div class="nw-filter-right">
+                    <span class="nw-result-count" id="nwResultCount">12 bài viết</span>
+                    <div class="nw-sort">
+                        <select class="nw-sort-select" id="nwSort" aria-label="Sắp xếp bài viết">
+                            <option value="newest">Mới nhất</option>
+                            <option value="popular">Phổ biến nhất</option>
+                            <option value="oldest">Cũ nhất</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURED ARTICLE (hero card) -->
+    <section class="nw-featured-section" id="nwFeatured">
+        <div class="container-xl px-3 px-md-4">
+            <article class="nw-featured" data-cat="lookbook" data-date="2024-11-15" data-views="4820">
+                <a href="#" class="nw-featured__img-wrap">
+                    <img
+                            src="https://images.unsplash.com/photo-1598971861713-54ad16a7e72e?w=1400&q=80"
+                            alt="SHEEPSMAN FACE — Bộ sưu tập mùa đông 2024"
+                            loading="eager"
+                    />
+                    <span class="nw-featured__cat-tag">Lookbook</span>
+                </a>
+                <div class="nw-featured__body">
+                    <div class="nw-featured__meta">
+          <span class="nw-meta-date">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            15 Tháng 11, 2024
+          </span>
+                        <span class="nw-meta-read">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            5 phút đọc
+          </span>
+                        <span class="nw-meta-views">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            4.8K lượt xem
+          </span>
+                    </div>
+                    <h2 class="nw-featured__title">
+                        <a href="#">SHEEPSMAN FACE HOODIE — Cú Drop Mùa Đông 2024 Mà Bạn Không Thể Bỏ Lỡ</a>
+                    </h2>
+                    <p class="nw-featured__excerpt">
+                        Từ xưởng dệt Việt Nam đến tủ đồ của bạn: story đằng sau chiếc hoodie hot nhất năm, chất liệu bông 100% cotton heavyweight, và lý do tại sao nó sold out trong 48 tiếng đầu tiên.
+                    </p>
+                    <div class="nw-featured__footer">
+                        <div class="nw-author">
+                            <div class="nw-author__avatar" aria-hidden="true">S</div>
+                            <div>
+                                <span class="nw-author__name">5TW Editorial</span>
+                                <span class="nw-author__role">Style &amp; Culture</span>
+                            </div>
+                        </div>
+                        <a href="#" class="nw-read-btn" aria-label="Đọc bài viết về SHEEPSMAN FACE HOODIE">
+                            Đọc ngay
+                            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- MAIN GRID + SIDEBAR -->
+    <section class="nw-main-section">
+        <div class="container-xl px-3 px-md-4">
+            <div class="nw-layout" id="nwLayout">
+
+                <!-- ARTICLE GRID -->
+                <div class="nw-grid-col">
+
+                    <!-- Empty state (hidden) -->
+                    <div class="nw-empty" id="nwEmpty" hidden>
+                        <div class="nw-empty__icon">📰</div>
+                        <p class="nw-empty__title">Không tìm thấy bài viết</p>
+                        <p class="nw-empty__sub">Thử tìm kiếm với từ khoá khác hoặc <button class="nw-reset-btn" id="nwReset">xem tất cả bài viết</button></p>
+                    </div>
+
+                    <!-- Cards grid -->
+                    <div class="nw-cards" id="nwCards" role="list">
+
+                        <!-- CARD 1 — Style Guide -->
+                        <article class="nw-card" data-cat="style-guide" data-date="2024-11-10" data-views="3210" role="listitem">
+                            <a href="#" class="nw-card__img-wrap">
+                                <img src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?w=700&q=80" alt="5 cách mix áo Tee phong cách streetwear" loading="lazy" />
+                                <span class="nw-card__cat">Style Guide</span>
+                            </a>
+                            <div class="nw-card__body">
+                                <div class="nw-card__meta">
+                                    <span>10 Th11, 2024</span>
+                                    <span>4 phút đọc</span>
+                                </div>
+                                <h3 class="nw-card__title"><a href="#">5 Cách Mix Áo Tee 5THEWAY® Không Bao Giờ Lỗi Mode</a></h3>
+                                <p class="nw-card__excerpt">Từ basic đến bold — cách kết hợp graphic tee với cargo pants, wide-leg trousers và layering để tạo outfit chất lượng cao.</p>
+                                <div class="nw-card__footer">
+                <span class="nw-card__views">
+                  <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  3.2K
+                </span>
+                                    <a href="#" class="nw-card__link">Đọc tiếp →</a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- CARD 2 — Deal -->
+                        <article class="nw-card nw-card--deal" data-cat="deal" data-date="2024-11-08" data-views="6700" role="listitem">
+                            <a href="#" class="nw-card__img-wrap">
+                                <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=700&q=80" alt="Sale lớn nhất năm tại 5THEWAY® OUTLET™" loading="lazy" />
+                                <span class="nw-card__cat nw-card__cat--deal">🔥 Deal Hot</span>
+                                <span class="nw-card__badge-sale">−50%</span>
+                            </a>
+                            <div class="nw-card__body">
+                                <div class="nw-card__meta">
+                                    <span>08 Th11, 2024</span>
+                                    <span>2 phút đọc</span>
+                                </div>
+                                <h3 class="nw-card__title"><a href="#">Sale Cuối Năm: Giảm Đến 50% Toàn Bộ Sản Phẩm 5THEWAY®</a></h3>
+                                <p class="nw-card__excerpt">Danh sách đầy đủ các sản phẩm được giảm giá sâu — từ hoodie đến accessories — cùng mã voucher độc quyền cho khách hàng thân thiết.</p>
+                                <div class="nw-card__footer">
+                <span class="nw-card__views">
+                  <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  6.7K
+                </span>
+                                    <a href="#" class="nw-card__link">Đọc tiếp →</a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- CARD 3 — Streetwear -->
+                        <article class="nw-card" data-cat="streetwear" data-date="2024-11-05" data-views="2890" role="listitem">
+                            <a href="#" class="nw-card__img-wrap">
+                                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80" alt="Xu hướng streetwear Việt Nam 2024" loading="lazy" />
+                                <span class="nw-card__cat">Streetwear</span>
+                            </a>
+                            <div class="nw-card__body">
+                                <div class="nw-card__meta">
+                                    <span>05 Th11, 2024</span>
+                                    <span>6 phút đọc</span>
+                                </div>
+                                <h3 class="nw-card__title"><a href="#">Streetwear Việt Nam 2024: Từ Ngách Đến Mainstream</a></h3>
+                                <p class="nw-card__excerpt">Cộng đồng streetwear Việt đang bùng nổ — phân tích xu hướng, thương hiệu nội địa đáng theo dõi và cách 5THEWAY® đang dẫn đầu làn sóng.</p>
+                                <div class="nw-card__footer">
+                <span class="nw-card__views">
+                  <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  2.9K
+                </span>
+                                    <a href="#" class="nw-card__link">Đọc tiếp →</a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- CARD 4 — Lookbook -->
+                        <article class="nw-card" data-cat="lookbook" data-date="2024-10-28" data-views="5100" role="listitem">
+                            <a href="#" class="nw-card__img-wrap">
+                                <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=700&q=80" alt="Lookbook Thu Đông 2024 5THEWAY" loading="lazy" />
+                                <span class="nw-card__cat">Lookbook</span>
+                            </a>
+                            <div class="nw-card__body">
+                                <div class="nw-card__meta">
+                                    <span>28 Th10, 2024</span>
+                                    <span>3 phút đọc</span>
+                                </div>
+                                <h3 class="nw-card__title"><a href="#">Lookbook Thu–Đông 2024: Dark Academia Meets Streetwear</a></h3>
+                                <p class="nw-card__excerpt">Bộ ảnh lookbook mùa lạnh với tông màu earth tone, layering technique và những item key piece không thể thiếu trong tủ đồ mùa này.</p>
+                                <div class="nw-card__footer">
+                <span class="nw-card__views">
+                  <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  5.1K
+                </span>
+                                    <a href="#" class="nw-card__link">Đọc tiếp →</a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- CARD 5 — How-to-wear -->
+                        <article class="nw-card" data-cat="howto" data-date="2024-10-20" data-views="1980" role="listitem">
+                            <a href="#" class="nw-card__img-wrap">
+                                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700&q=80" alt="Cách phối đồ oversize không bị rộng" loading="lazy" />
+                                <span class="nw-card__cat">How-to-wear</span>
+                            </a>
+                            <div class="nw-card__body">
+                                <div class="nw-card__meta">
+                                    <span>20 Th10, 2024</span>
+                                    <span>5 phút đọc</span>
+                                </div>
+                                <h3 class="nw-card__title"><a href="#">Oversize Đúng Cách: 7 Quy Tắc Phối Đồ Không Bị Dìm Dáng</a></h3>
+                                <p class="nw-card__excerpt">Oversize không có nghĩa là mặc gì cũng được — hướng dẫn từng bước để balance proportion, chọn đúng bottom và play with layers.</p>
+                                <div class="nw-card__footer">
+                <span class="nw-card__views">
+                  <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  1.9K
+                </span>
+                                    <a href="#" class="nw-card__link">Đọc tiếp →</a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- CARD 6 — Brand -->
+                        <article class="nw-card" data-cat="brand" data-date="2024-10-12" data-views="3440" role="listitem">
+                            <a href="#" class="nw-card__img-wrap">
+                                <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=700&q=80" alt="Câu chuyện thương hiệu 5THEWAY" loading="lazy" />
+                                <span class="nw-card__cat">Về thương hiệu</span>
+                            </a>
+                            <div class="nw-card__body">
+                                <div class="nw-card__meta">
+                                    <span>12 Th10, 2024</span>
+                                    <span>8 phút đọc</span>
+                                </div>
+                                <h3 class="nw-card__title"><a href="#">5THEWAY® Là Gì? Story Đằng Sau "No Logo Brand" Đình Đám</a></h3>
+                                <p class="nw-card__excerpt">Từ một cửa hàng nhỏ ở Sài Gòn đến thương hiệu streetwear được cộng đồng trẻ yêu thích — hành trình 5 năm xây dựng PUBLIC ICON™.</p>
+                                <div class="nw-card__footer">
+                <span class="nw-card__views">
+                  <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  3.4K
+                </span>
+                                    <a href="#" class="nw-card__link">Đọc tiếp →</a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- CARD 7 — Deal -->
+                        <article class="nw-card" data-cat="deal" data-date="2024-10-05" data-views="4100" role="listitem">
+                            <a href="#" class="nw-card__img-wrap">
+                                <img src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=700&q=80" alt="Flash sale 11.11" loading="lazy" />
+                                <span class="nw-card__cat nw-card__cat--deal">🔥 Deal Hot</span>
+                                <span class="nw-card__badge-sale">−30%</span>
+                            </a>
+                            <div class="nw-card__body">
+                                <div class="nw-card__meta">
+                                    <span>05 Th10, 2024</span>
+                                    <span>3 phút đọc</span>
+                                </div>
+                                <h3 class="nw-card__title"><a href="#">Flash Sale 11.11: Top 10 Item Giảm Giá Sâu Nhất</a></h3>
+                                <p class="nw-card__excerpt">Danh sách cuối tuần — những items với mức giảm khủng nhất trong dịp 11.11, sắp xếp theo mức giảm và còn hàng.</p>
+                                <div class="nw-card__footer">
+                <span class="nw-card__views">
+                  <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  4.1K
+                </span>
+                                    <a href="#" class="nw-card__link">Đọc tiếp →</a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- CARD 8 — Streetwear -->
+                        <article class="nw-card" data-cat="streetwear" data-date="2024-09-30" data-views="2210" role="listitem">
+                            <a href="#" class="nw-card__img-wrap">
+                                <img src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=700&q=80" alt="Sneaker và streetwear" loading="lazy" />
+                                <span class="nw-card__cat">Streetwear</span>
+                            </a>
+                            <div class="nw-card__body">
+                                <div class="nw-card__meta">
+                                    <span>30 Th09, 2024</span>
+                                    <span>4 phút đọc</span>
+                                </div>
+                                <h3 class="nw-card__title"><a href="#">Sneaker + Streetwear: Combo Hoàn Hảo Mùa Thu 2024</a></h3>
+                                <p class="nw-card__excerpt">Những đôi giày đang trending và cách phối chúng với collection 5THEWAY® — từ chunky soles đến minimalist runners.</p>
+                                <div class="nw-card__footer">
+                <span class="nw-card__views">
+                  <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  2.2K
+                </span>
+                                    <a href="#" class="nw-card__link">Đọc tiếp →</a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- CARD 9 — Style Guide -->
+                        <article class="nw-card" data-cat="style-guide" data-date="2024-09-22" data-views="1750" role="listitem">
+                            <a href="#" class="nw-card__img-wrap">
+                                <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=700&q=80" alt="Color theory phối màu streetwear" loading="lazy" />
+                                <span class="nw-card__cat">Style Guide</span>
+                            </a>
+                            <div class="nw-card__body">
+                                <div class="nw-card__meta">
+                                    <span>22 Th09, 2024</span>
+                                    <span>5 phút đọc</span>
+                                </div>
+                                <h3 class="nw-card__title"><a href="#">Color Theory Cho Dân Streetwear: Phối Màu Không Bao Giờ Sai</a></h3>
+                                <p class="nw-card__excerpt">Earth tones, neutral palette hay monochrome? Giải thích đơn giản về color theory áp dụng thực tiễn vào việc phối đồ streetwear hàng ngày.</p>
+                                <div class="nw-card__footer">
+                <span class="nw-card__views">
+                  <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  1.7K
+                </span>
+                                    <a href="#" class="nw-card__link">Đọc tiếp →</a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- CARD 10 — Howto (hidden initially, load more) -->
+                        <article class="nw-card nw-hidden" data-cat="howto" data-date="2024-09-15" data-views="1320" role="listitem">
+                            <a href="#" class="nw-card__img-wrap">
+                                <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=700&q=80" alt="Mặc đẹp với ngân sách thấp" loading="lazy" />
+                                <span class="nw-card__cat">How-to-wear</span>
+                            </a>
+                            <div class="nw-card__body">
+                                <div class="nw-card__meta">
+                                    <span>15 Th09, 2024</span>
+                                    <span>6 phút đọc</span>
+                                </div>
+                                <h3 class="nw-card__title"><a href="#">Mặc Đẹp Với Ngân Sách Dưới 1 Triệu: Bộ Tủ Đồ Capsule</a></h3>
+                                <p class="nw-card__excerpt">10 món đồ cơ bản với tổng ngân sách dưới 1 triệu đồng, tạo ra 30+ outfit khác nhau — checklist đầy đủ và gợi ý mua sắm tại 5THEWAY®.</p>
+                                <div class="nw-card__footer">
+                <span class="nw-card__views">
+                  <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  1.3K
+                </span>
+                                    <a href="#" class="nw-card__link">Đọc tiếp →</a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- CARD 11 (hidden) — Brand -->
+                        <article class="nw-card nw-hidden" data-cat="brand" data-date="2024-09-01" data-views="980" role="listitem">
+                            <a href="#" class="nw-card__img-wrap">
+                                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=700&q=80" alt="5THEWAY mở rộng" loading="lazy" />
+                                <span class="nw-card__cat">Về thương hiệu</span>
+                            </a>
+                            <div class="nw-card__body">
+                                <div class="nw-card__meta">
+                                    <span>01 Th09, 2024</span>
+                                    <span>4 phút đọc</span>
+                                </div>
+                                <h3 class="nw-card__title"><a href="#">5THEWAY® Outlet Mở Rộng Sang Hà Nội — Điều Gì Sắp Đến?</a></h3>
+                                <p class="nw-card__excerpt">Sau TP.HCM, 5THEWAY® OUTLET™ chính thức ra mắt điểm bán thứ hai tại Hà Nội — interview độc quyền với founder.</p>
+                                <div class="nw-card__footer">
+                <span class="nw-card__views">
+                  <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  980
+                </span>
+                                    <a href="#" class="nw-card__link">Đọc tiếp →</a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- CARD 12 (hidden) — Lookbook -->
+                        <article class="nw-card nw-hidden" data-cat="lookbook" data-date="2024-08-20" data-views="2760" role="listitem">
+                            <a href="#" class="nw-card__img-wrap">
+                                <img src="https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=700&q=80" alt="Summer Lookbook 2024" loading="lazy" />
+                                <span class="nw-card__cat">Lookbook</span>
+                            </a>
+                            <div class="nw-card__body">
+                                <div class="nw-card__meta">
+                                    <span>20 Th08, 2024</span>
+                                    <span>3 phút đọc</span>
+                                </div>
+                                <h3 class="nw-card__title"><a href="#">Summer Lookbook 2024: Nhẹ, Thoáng Và Vẫn Đủ Chất</a></h3>
+                                <p class="nw-card__excerpt">Hè này mặc gì? Lookbook mùa hè với lightweight fabrics, linen blends và những màu sắc tươi tắn từ collection summer drop.</p>
+                                <div class="nw-card__footer">
+                <span class="nw-card__views">
+                  <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  2.7K
+                </span>
+                                    <a href="#" class="nw-card__link">Đọc tiếp →</a>
+                                </div>
+                            </div>
+                        </article>
+
+                    </div><!-- end nw-cards -->
+
+                    <!-- Load more -->
+                    <div class="nw-load-more" id="nwLoadMore">
+                        <div class="nw-progress">
+                            <div class="nw-progress__fill" id="nwProgressFill" style="width:75%"></div>
+                        </div>
+                        <p class="nw-progress__meta" id="nwProgressMeta">Đang xem 9 / 12 bài viết</p>
+                        <button class="nw-load-btn" id="nwLoadBtn">
+                            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+                            Tải thêm 3 bài viết
+                        </button>
+                    </div>
+
+                </div><!-- end nw-grid-col -->
+
+                <!-- SIDEBAR -->
+                <aside class="nw-sidebar" id="nwSidebar" aria-label="Sidebar tin tức">
+
+                    <!-- Newsletter CTA -->
+                    <div class="nw-sidebar-card nw-newsletter">
+                        <div class="nw-newsletter__deco" aria-hidden="true">✦</div>
+                        <h3 class="nw-newsletter__title">STYLE ALERT</h3>
+                        <p class="nw-newsletter__sub">Nhận deal, lookbook và style tips mới nhất — không spam.</p>
+                        <div class="nw-newsletter__form">
+                            <input type="email" class="nw-nl-input" id="nlEmail" placeholder="email@bạn.com" />
+                            <button class="nw-nl-btn" id="nlSubmit" aria-label="Đăng ký nhận tin">
+                                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                            </button>
+                        </div>
+                        <p class="nw-nl-msg" id="nlMsg" style="display:none;"></p>
+                        <p class="nw-newsletter__note">Đã có <b>2.400+</b> người đăng ký.</p>
+                    </div>
+
+                    <!-- Popular posts -->
+                    <div class="nw-sidebar-card">
+                        <h3 class="nw-sidebar-title">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                            Đọc Nhiều Nhất
+                        </h3>
+                        <ol class="nw-popular-list">
+                            <li class="nw-popular-item">
+                                <span class="nw-popular-num">01</span>
+                                <div class="nw-popular-info">
+                                    <a href="#" class="nw-popular-title">Sale Cuối Năm: Giảm Đến 50%</a>
+                                    <span class="nw-popular-views">6.7K lượt xem</span>
+                                </div>
+                            </li>
+                            <li class="nw-popular-item">
+                                <span class="nw-popular-num">02</span>
+                                <div class="nw-popular-info">
+                                    <a href="#" class="nw-popular-title">SHEEPSMAN FACE HOODIE — Cú Drop Mùa Đông</a>
+                                    <span class="nw-popular-views">4.8K lượt xem</span>
+                                </div>
+                            </li>
+                            <li class="nw-popular-item">
+                                <span class="nw-popular-num">03</span>
+                                <div class="nw-popular-info">
+                                    <a href="#" class="nw-popular-title">Lookbook Thu–Đông 2024</a>
+                                    <span class="nw-popular-views">5.1K lượt xem</span>
+                                </div>
+                            </li>
+                            <li class="nw-popular-item">
+                                <span class="nw-popular-num">04</span>
+                                <div class="nw-popular-info">
+                                    <a href="#" class="nw-popular-title">Flash Sale 11.11: Top 10 Items</a>
+                                    <span class="nw-popular-views">4.1K lượt xem</span>
+                                </div>
+                            </li>
+                            <li class="nw-popular-item">
+                                <span class="nw-popular-num">05</span>
+                                <div class="nw-popular-info">
+                                    <a href="#" class="nw-popular-title">5 Cách Mix Áo Tee Không Lỗi Mode</a>
+                                    <span class="nw-popular-views">3.2K lượt xem</span>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Topic tags cloud -->
+                    <div class="nw-sidebar-card">
+                        <h3 class="nw-sidebar-title">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                            Chủ Đề
+                        </h3>
+                        <div class="nw-tag-cloud">
+                            <button class="nw-tag" data-cat="lookbook">#Lookbook</button>
+                            <button class="nw-tag" data-cat="style-guide">#StyleGuide</button>
+                            <button class="nw-tag" data-cat="deal">#DealAlert</button>
+                            <button class="nw-tag" data-cat="streetwear">#Streetwear</button>
+                            <button class="nw-tag" data-cat="howto">#HowToWear</button>
+                            <button class="nw-tag" data-cat="brand">#5THEWAY</button>
+                            <button class="nw-tag" data-cat="all">#TatCa</button>
+                        </div>
+                    </div>
+
+                    <!-- Shop promo card -->
+                    <div class="nw-sidebar-card nw-promo-card">
+                        <p class="nw-promo-eyebrow">ĐẶC BIỆT</p>
+                        <p class="nw-promo-title">SHEEPSMAN<br/>FACE HOODIE</p>
+                        <p class="nw-promo-price">650.000đ</p>
+                        <a href="product.html" class="nw-promo-btn">Xem ngay →</a>
+                        <div class="nw-promo-deco" aria-hidden="true">5TW</div>
+                    </div>
+
+                </aside>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- BACK TO TOP -->
+    <button class="nw-back-top" id="nwBackTop" aria-label="Về đầu trang">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+
+</section>
+</body>
+</html>

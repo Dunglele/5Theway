@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Giỏ hàng - _5theway</title>
+    <style>
+        .cart-page { padding: 120px 0 80px; background: #fff; }
+        .cart-title { font-family: 'Bebas Neue', cursive; font-size: 3rem; letter-spacing: 2px; margin-bottom: 40px; }
+        .cart-table thead { background: #f9f9f9; }
+        .cart-table th { border: none; padding: 20px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #888; }
+        .cart-table td { padding: 25px 20px; vertical-align: middle; border-bottom: 1px solid #eee; }
+        .cart-item-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-right: 20px; }
+        .cart-item-name { font-weight: 600; color: #000; text-decoration: none; font-size: 1.1rem; }
+        .cart-item-price { font-weight: 500; color: #666; }
+        
+        .qty-control { display: flex; align-items: center; border: 1px solid #ddd; width: fit-content; border-radius: 5px; overflow: hidden; }
+        .qty-btn { width: 35px; height: 35px; background: #fff; border: none; cursor: pointer; transition: all 0.2s; }
+        .qty-btn:hover { background: #f0f0f0; }
+        .qty-input { width: 45px; height: 35px; border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; text-align: center; font-weight: 600; }
+        
+        .cart-summary { background: #f9f9f9; padding: 40px; border-radius: 15px; position: sticky; top: 120px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 1.1rem; }
+        .summary-total { border-top: 2px solid #000; padding-top: 20px; margin-top: 20px; font-weight: 700; font-size: 1.5rem; color: #000; }
+        
+        .btn-checkout { background: #000; color: #fff; width: 100%; padding: 18px; border-radius: 10px; font-weight: 700; letter-spacing: 1px; border: none; transition: all 0.3s; margin-top: 30px; }
+        .btn-checkout:hover { background: #333; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        
+        .empty-cart-msg { padding: 100px 0; text-align: center; }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <main class="cart-page">
+        <div class="container-xl">
+            <h1 class="cart-title">GIỎ HÀNG CỦA BẠN</h1>
+
+            <div th:if="${#lists.isEmpty(cartItems)}" class="empty-cart-msg">
+                <h3 class="text-muted mb-4">Giỏ hàng của bạn đang trống.</h3>
+                <a href="/" class="btn btn-dark px-5 py-3" style="border-radius: 8px; font-weight: 600;">TIẾP TỤC MUA SẮM</a>
+            </div>
+
+            <div class="row" th:unless="${#lists.isEmpty(cartItems)}">
+                <!-- Cart Items List -->
+                <div class="col-lg-8">
+                    <table class="table cart-table">
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Giá</th>
+                                <th>Số lượng</th>
+                                <th class="text-right">Tổng cộng</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${cartItems}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img th:src="${item.imageUrl}" th:alt="${item.name}" class="cart-item-img">
+                                        <a th:href="@{'/Home/Product/' + ${item.productId}}" class="cart-item-name" th:text="${item.name}">Tên sản phẩm</a>
+                                    </div>
+                                </td>
+                                <td class="cart-item-price" th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</td>
+                                <td>
+                                    <form th:action="@{/Home/Cart/Update}" method="post" class="qty-control">
+                                        <input type="hidden" name="productId" th:value="${item.productId}">
+                                        <button type="submit" name="quantity" th:value="${item.quantity - 1}" class="qty-btn">-</button>
+                                        <input type="text" th:value="${item.quantity}" class="qty-input" readonly>
+                                        <button type="submit" name="quantity" th:value="${item.quantity + 1}" class="qty-btn">+</button>
+                                    </form>
+                                </td>
+                                <td class="text-right font-weight-bold" th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</td>
+                                <td class="text-right">
+                                    <a th:href="@{'/Home/Cart/Remove/' + ${item.productId}}" class="text-danger" style="text-decoration:none;">&times;</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="mt-4">
+                        <a href="/" class="text-dark font-weight-bold" style="text-decoration: underline;">← Tiếp tục mua sắm</a>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="col-lg-4">
+                    <div class="cart-summary">
+                        <h4 class="mb-4" style="font-weight: 700;">TỔNG ĐƠN HÀNG</h4>
+                        <div class="summary-row">
+                            <span>Tạm tính</span>
+                            <span th:text="${#numbers.formatDecimal(totalAmount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Phí vận chuyển</span>
+                            <span th:text="${totalAmount >= 500000 ? 'Miễn phí' : '30.000đ'}">0đ</span>
+                        </div>
+                        <div class="summary-total">
+                            <span>Tổng cộng</span>
+                            <span th:text="${#numbers.formatDecimal(totalAmount >= 500000 ? totalAmount : totalAmount + 30000, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                        </div>
+                        
+                        <a th:href="@{/Home/Checkout}" class="btn btn-checkout d-flex align-items-center justify-content-center" style="text-decoration: none;">TIẾN HÀNH THANH TOÁN</a>
+                        
+                        <p class="text-muted mt-4" style="font-size: 0.85rem; text-align: center;">
+                            Miễn phí vận chuyển cho đơn hàng trên 500.000đ.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</section>
+</body>
+</html>

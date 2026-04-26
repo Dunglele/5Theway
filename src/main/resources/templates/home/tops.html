@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Tops - _5theway</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <main>
+            <div class="container-xl px-3 px-md-4" style="padding-top:20px;padding-bottom:60px;">
+
+                <div class="cat-toolbar">
+                    <div class="cat-toolbar__left">
+                        <button class="btn-filter-toggle active" id="filterToggle" aria-expanded="true">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+                            </svg>
+                            Bộ lọc
+                        </button>
+                        <span class="result-count" th:text="${#lists.size(products)} + ' sản phẩm'">0 sản phẩm</span>
+                    </div>
+                    <div class="cat-toolbar__right">
+                        <select class="sort-select" id="sortSelect" onchange="applyFilters()">
+                            <option value="" th:selected="${sort == null}">Mặc định</option>
+                            <option value="priceAsc" th:selected="${sort == 'priceAsc'}">Giá: Thấp → Cao</option>
+                            <option value="priceDesc" th:selected="${sort == 'priceDesc'}">Giá: Cao → Thấp</option>
+                            <option value="newest" th:selected="${sort == 'newest'}">Mới nhất</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="cat-layout" id="catLayout">
+                    <!-- SIDEBAR -->
+                    <aside class="filter-sidebar" id="filterSidebar">
+                        <div class="filter-sidebar__header">
+                            <h2 class="filter-sidebar__title">Bộ lọc</h2>
+                            <a th:href="@{/Home/Tops}" class="btn-clear-all" style="text-decoration:none;">Xoá tất cả</a>
+                        </div>
+
+                        <div class="filter-group open">
+                            <button class="filter-group__trigger">Khoảng giá</button>
+                            <div class="filter-group__body">
+                                <div class="price-range-inputs">
+                                    <input type="number" id="priceMin" th:value="${minPrice}" placeholder="Từ" min="0" onchange="applyFilters()" />
+                                    <span class="price-dash">—</span>
+                                    <input type="number" id="priceMax" th:value="${maxPrice}" placeholder="Đến" min="0" onchange="applyFilters()" />
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- PRODUCTS -->
+                    <section style="flex:1;">
+                        <div th:if="${#lists.isEmpty(products)}" class="text-center" style="padding:100px 0;">
+                            <h3 class="text-muted">Không có sản phẩm nào phù hợp với bộ lọc.</h3>
+                        </div>
+                        
+                        <div class="products-grid grid-4" th:unless="${#lists.isEmpty(products)}">
+                            <th:block th:each="product : ${products}">
+                                <article class="product-card">
+                                    <a th:href="@{'/Home/Product/' + ${product.id}}" class="product-card__img-wrap d-block">
+                                        <img th:src="${product.mainImageUrl}" th:alt="${product.name}" loading="lazy" />
+                                        <span th:if="${product.stock < 15}" class="product-card__badge badge-low">Sắp hết</span>
+                                        <span th:if="${product.newArrival}" class="product-card__badge badge-new">New</span>
+                                    </a>
+                                    <div class="product-card__body">
+                                        <a th:href="@{'/Home/Product/' + ${product.id}}">
+                                            <h3 class="product-card__name" th:text="${product.name}">Tên sản phẩm</h3>
+                                        </a>
+                                        <div class="product-card__price-row">
+                                            <span class="product-card__price" th:text="${#numbers.formatDecimal(product.salePrice != null ? product.salePrice : product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                                            <span class="product-card__old-price" th:if="${product.salePrice != null}" th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                                        </div>
+                                    </div>
+                                    <div class="product-card__footer">
+                                        <form th:action="@{/Home/Cart/Add}" method="post">
+                                            <input type="hidden" name="productId" th:value="${product.id}">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn-add-cart">
+                                                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                                Chọn mua
+                                            </button>
+                                        </form>
+                                    </div>
+                                </article>
+                            </th:block>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <th:block layout:fragment="scripts">
+        <script>
+            function applyFilters() {
+                const min = document.getElementById('priceMin').value;
+                const max = document.getElementById('priceMax').value;
+                const sort = document.getElementById('sortSelect').value;
+                
+                let url = window.location.pathname + '?';
+                if (min) url += 'minPrice=' + min + '&';
+                if (max) url += 'maxPrice=' + max + '&';
+                if (sort) url += 'sort=' + sort + '&';
+                
+                window.location.href = url;
+            }
+        </script>
+    </th:block>
+</body>
+</html>

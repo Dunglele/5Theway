@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Thanh toán - _5theway</title>
+    <style>
+        .checkout-page { padding: 120px 0 80px; }
+        .checkout-title { font-family: 'Bebas Neue', cursive; font-size: 3rem; letter-spacing: 2px; margin-bottom: 40px; }
+        .checkout-section-title { font-weight: 700; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .order-summary-box { background: #f9f9f9; padding: 30px; border-radius: 15px; }
+        .summary-item { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.95rem; }
+        .btn-place-order { background: #000; color: #fff; width: 100%; padding: 18px; border-radius: 10px; font-weight: 700; letter-spacing: 1px; border: none; transition: all 0.3s; margin-top: 30px; }
+        .btn-place-order:hover { background: #333; }
+        .checkout-form label { font-weight: 600; font-size: 0.9rem; }
+        .checkout-form .form-control { border-radius: 8px; padding: 12px; }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <main class="checkout-page">
+        <div class="container-xl">
+            <h1 class="checkout-title">THANH TOÁN</h1>
+            
+            <form th:action="@{/Home/Checkout/PlaceOrder}" th:object="${order}" method="post" class="checkout-form">
+                <div class="row">
+                    <!-- Delivery Info -->
+                    <div class="col-lg-7">
+                        <h4 class="checkout-section-title">THÔNG TIN GIAO HÀNG</h4>
+                        <div class="row">
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="fullName">Họ và tên *</label>
+                                <input type="text" id="fullName" th:field="*{fullName}" class="form-control" required placeholder="Nhập đầy đủ họ tên">
+                            </div>
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="email">Email *</label>
+                                <input type="email" id="email" th:field="*{email}" class="form-control" required placeholder="example@gmail.com">
+                            </div>
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="phoneNumber">Số điện thoại *</label>
+                                <input type="text" id="phoneNumber" th:field="*{phoneNumber}" class="form-control" required placeholder="090...">
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="shippingAddress">Địa chỉ nhận hàng *</label>
+                                <textarea id="shippingAddress" th:field="*{shippingAddress}" class="form-control" rows="3" required placeholder="Số nhà, tên đường, phường/xã..."></textarea>
+                            </div>
+                        </div>
+
+                        <h4 class="checkout-section-title mt-5">PHƯƠNG THỨC THANH TOÁN</h4>
+                        <div class="custom-control custom-radio mb-3">
+                            <input type="radio" id="paymentCOD" name="paymentMethod" value="COD" class="custom-control-input" checked>
+                            <label class="custom-control-label" for="paymentCOD">Thanh toán khi nhận hàng (COD)</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="paymentCard" name="paymentMethod" value="BANKING" class="custom-control-input">
+                            <label class="custom-control-label" for="paymentCard">Chuyển khoản ngân hàng</label>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="col-lg-5">
+                        <div class="order-summary-box">
+                            <h4 class="checkout-section-title">ĐƠN HÀNG CỦA BẠN</h4>
+                            
+                            <!-- Coupon Box -->
+                            <div class="mb-4">
+                                <div th:if="${couponSuccess}" class="alert alert-success py-2 small" th:text="${couponSuccess}"></div>
+                                <div th:if="${couponError}" class="alert alert-danger py-2 small" th:text="${couponError}"></div>
+                                <div class="input-group">
+                                    <input type="text" name="couponCode" id="couponInput" class="form-control form-control-sm" placeholder="Mã giảm giá">
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-dark btn-sm" onclick="applyCoupon()">ÁP DỤNG</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div th:each="item : ${cartItems}" class="summary-item">
+                                <span th:text="${item.name} + ' x ' + ${item.quantity}">Product x 1</span>
+                                <span th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                            </div>
+                            <hr>
+                            <div class="summary-item">
+                                <span>Tạm tính</span>
+                                <span th:text="${#numbers.formatDecimal(totalAmount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                            </div>
+                            <div class="summary-item" th:if="${discount > 0}" style="color: #28a745;">
+                                <span>Giảm giá</span>
+                                <span th:text="'-' + ${#numbers.formatDecimal(discount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Phí vận chuyển</span>
+                                <span th:text="${totalAmount >= 500000 ? 'Miễn phí' : '30.000đ'}">0đ</span>
+                            </div>
+                            <div class="summary-item" style="font-size: 1.3rem; font-weight: 700; color: #000; margin-top: 20px;">
+                                <span>TỔNG CỘNG</span>
+                                <span th:text="${#numbers.formatDecimal(totalAmount - discount + (totalAmount >= 500000 ? 0 : 30000), 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                            </div>
+                            
+                            <button type="submit" class="btn-place-order">XÁC NHẬN ĐẶT HÀNG</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+</section>
+
+<th:block layout:fragment="scripts">
+    <script>
+        function applyCoupon() {
+            const code = document.getElementById('couponInput').value;
+            if (!code) return;
+            
+            // Tạo một form ẩn để submit POST lên ApplyCoupon
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/Home/Checkout/ApplyCoupon';
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'couponCode';
+            input.value = code;
+            form.appendChild(input);
+            
+            // CSRF Token (Spring Security mặc định yêu cầu)
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_csrf';
+            csrfInput.value = '[[${_csrf.token}]]';
+            form.appendChild(csrfInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</th:block>
+</body>
+</html>

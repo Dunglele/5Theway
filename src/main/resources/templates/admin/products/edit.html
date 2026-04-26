@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Sửa sản phẩm - Admin</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="mb-4">
+        <a th:href="@{/admin/products}" class="text-dark" style="font-weight: 600;">← QUAY LẠI DANH SÁCH</a>
+        <h2 class="mt-2" style="font-family: 'Bebas Neue', cursive; font-size: 2.5rem;">CHỈNH SỬA SẢN PHẨM</h2>
+    </div>
+
+    <div class="card p-4">
+        <form th:action="@{/admin/products/save}" th:object="${product}" method="post" enctype="multipart/form-data">
+            <!-- Hidden field for ID to trigger Update instead of Insert -->
+            <input type="hidden" th:field="*{id}">
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group mb-3">
+                        <label style="font-weight: 600;">Tên sản phẩm</label>
+                        <input type="text" th:field="*{name}" class="form-control" placeholder="Nhập tên sản phẩm" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label style="font-weight: 600;">Mô tả ngắn</label>
+                        <input type="text" th:field="*{shortDescription}" class="form-control" placeholder="Tóm tắt ngắn gọn">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label style="font-weight: 600;">Mô tả chi tiết</label>
+                        <textarea th:field="*{description}" class="form-control" rows="5"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label style="font-weight: 600;">Tải ảnh mới (nếu có)</label>
+                        <input type="file" name="imageFile" class="form-control-file" accept="image/*">
+                        <div class="mt-2" th:if="${product.mainImageUrl != null}">
+                            <small class="text-muted">Ảnh hiện tại:</small><br>
+                            <img th:src="${product.mainImageUrl}" style="width: 100px; border-radius: 5px; margin-top: 5px;">
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label style="font-weight: 600;">Hoặc đường dẫn ảnh (URL)</label>
+                        <input type="text" th:field="*{mainImageUrl}" class="form-control" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label style="font-weight: 600;">Danh mục</label>
+                        <select name="category.id" class="form-control" required>
+                            <option value="">-- Chọn danh mục --</option>
+                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}" th:selected="${product.category != null and product.category.id == cat.id}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label style="font-weight: 600;">Giá bán (VNĐ)</label>
+                        <input type="number" th:field="*{price}" class="form-control" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label style="font-weight: 600;">Số lượng tồn kho</label>
+                        <input type="number" th:field="*{stock}" class="form-control" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" th:field="*{featured}" class="custom-control-input" id="featuredCheck">
+                            <label class="custom-control-label" for="featuredCheck">Sản phẩm nổi bật (Trang chủ)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            <button type="submit" class="btn btn-dark btn-lg px-5" style="border-radius: 8px; font-weight: 600;">CẬP NHẬT SẢN PHẨM</button>
+        </form>
+    </div>
+</section>
+</body>
+</html>
