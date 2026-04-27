@@ -29,8 +29,13 @@ public class ProductService {
         return productRepository.findByCategorySlug(slug);
     }
 
-    public List<Product> getProductsByCategoryFiltered(String slug, Double minPrice, Double maxPrice, String sort) {
-        List<Product> products = productRepository.findByCategorySlug(slug);
+    public List<Product> getProductsByCategoryFiltered(String slug, Double minPrice, Double maxPrice, String sort, String color, String status) {
+        List<Product> products;
+        if (slug == null || slug.isEmpty() || slug.equalsIgnoreCase("all")) {
+            products = productRepository.findAll();
+        } else {
+            products = productRepository.findByCategorySlug(slug);
+        }
         
         // 1. Lọc theo giá
         if (minPrice != null || maxPrice != null) {
@@ -44,8 +49,24 @@ public class ProductService {
                 })
                 .collect(java.util.stream.Collectors.toList());
         }
+
+        // 2. Lọc theo màu sắc
+        if (color != null && !color.isEmpty()) {
+            products = products.stream()
+                .filter(p -> p.getColor() != null && p.getColor().equalsIgnoreCase(color))
+                .collect(java.util.stream.Collectors.toList());
+        }
+
+        // 3. Lọc theo trạng thái kho
+        if (status != null && !status.isEmpty()) {
+            if (status.equalsIgnoreCase("inStock")) {
+                products = products.stream().filter(p -> p.getStock() > 0).collect(java.util.stream.Collectors.toList());
+            } else if (status.equalsIgnoreCase("lowStock")) {
+                products = products.stream().filter(p -> p.getStock() > 0 && p.getStock() < 15).collect(java.util.stream.Collectors.toList());
+            }
+        }
         
-        // 2. Sắp xếp
+        // 4. Sắp xếp
         if (sort != null) {
             switch (sort) {
                 case "priceAsc":
@@ -77,6 +98,12 @@ public class ProductService {
 
     public Product getProductById(Long id) {
         return productRepository.findById(id).orElse(null);
+    }
+
+    public List<Product> getRandomProducts(int limit) {
+        List<Product> all = productRepository.findAll();
+        java.util.Collections.shuffle(all);
+        return all.stream().limit(limit).collect(java.util.stream.Collectors.toList());
     }
 
     public Product saveProduct(Product product) {

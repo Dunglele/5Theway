@@ -5,157 +5,302 @@
 <head>
     <title th:text="${product.name} + ' - _5theway'"></title>
     <style>
-        .product-detail-container { padding: 120px 0 60px; }
-        .product-main-img { width: 100%; max-width: 450px; display: block; margin: 0 auto; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .product-info-wrap { padding-left: 40px; }
-        .product-category-label { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; }
-        .product-name-detail { font-family: 'Be Vietnam Pro', sans-serif; font-size: 3.5rem; line-height: 1; margin-bottom: 20px; }
-        .product-price-detail { font-size: 2rem; font-weight: 700; color: #000; margin-bottom: 15px; }
-        .product-short-desc { font-size: 1.1rem; color: #333; font-weight: 500; margin-bottom: 20px; font-style: italic; }
-        .product-desc-detail { color: #666; line-height: 1.8; margin-bottom: 40px; font-size: 1rem; border-top: 1px solid #eee; padding-top: 20px; }
-        .stock-status { font-size: 0.9rem; margin-bottom: 20px; font-weight: 600; }
-        .stock-in { color: #28a745; }
-        .stock-out { color: #dc3545; }
-        .qty-input-wrap { display: flex; align-items: center; margin-bottom: 30px; }
-        .qty-btn { width: 40px; height: 40px; border: 1px solid #ddd; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
-        .qty-btn:hover { background: #f5f5f5; }
-        .qty-val { width: 60px; height: 40px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; border-left: none; border-right: none; text-align: center; font-weight: 600; }
-        .btn-add-to-cart-lg { background: #000; color: #fff; border: none; padding: 15px 40px; border-radius: 8px; font-weight: 600; letter-spacing: 1px; transition: all 0.3s; width: 100%; max-width: 300px; }
-        .btn-add-to-cart-lg:hover { background: #333; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .related-section { border-top: 1px solid #eee; padding-top: 60px; margin-top: 60px; }
-        .review-item { border-bottom: 1px solid #eee; padding: 20px 0; }
-        .star-rating { color: #ffb347; font-size: 0.9rem; }
+        :root {
+            --pd-gap: 30px;
+        }
+        .product-detail-container { padding: 40px 0 80px; }
+        
+        /* Image Section */
+        .pd-image-wrap { position: sticky; top: 100px; display: flex; justify-content: center; }
+        .product-main-img { 
+            width: 100%; 
+            max-width: 500px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 4px; 
+            background: #f9f9f9;
+        }
+
+        /* Info Section */
+        .product-info-wrap { padding-left: 10px; }
+        .product-category-label { font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; display: block; }
+        .product-name-detail { 
+            font-family: 'Be Vietnam Pro', sans-serif; 
+            font-weight: 700;
+            font-size: clamp(1.4rem, 3vw, 1.8rem); 
+            line-height: 1.2; 
+            margin-bottom: 12px; 
+            letter-spacing: -0.01em;
+        }
+        .product-price-detail { font-size: 1.2rem; font-weight: 700; color: #000; margin-bottom: 20px; display: flex; align-items: baseline; gap: 12px; }
+        .price-sale { color: #dc3545; }
+        .price-old { text-decoration: line-through; color: #bbb; font-size: 0.95rem; font-weight: 500; }
+
+        .product-short-desc { 
+            font-size: 0.85rem; 
+            color: #666; 
+            line-height: 1.6;
+            margin-bottom: 25px; 
+            padding-left: 12px;
+            border-left: 2px solid #000;
+        }
+
+        .variant-group { margin-bottom: 20px; }
+        .variant-label { font-size: 0.7rem; font-weight: 800; color: #000; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: block; }
+        
+        /* Size Chips */
+        .size-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+        .size-chip { 
+            min-width: 38px; height: 38px; padding: 0 8px;
+            border: 1px solid #ddd; border-radius: 2px; 
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; 
+        }
+        .size-chip:hover { border-color: #000; }
+        .size-chip.active { background: #000; color: #fff; border-color: #000; }
+
+        /* Color Swatches */
+        .color-swatches { display: flex; gap: 10px; }
+        .color-swatch-detail { 
+            width: 22px; height: 22px; border-radius: 50%; 
+            border: 1px solid #eee; cursor: pointer; transition: all 0.2s; 
+            position: relative;
+        }
+        .color-swatch-detail.active { box-shadow: 0 0 0 1.5px #fff, 0 0 0 2.5px #000; }
+
+        /* Purchase Section */
+        .pd-action-row { display: flex; gap: 12px; margin-top: 35px; }
+        .qty-input-wrap { 
+            display: flex; align-items: center; 
+            border: 1px solid #ddd; border-radius: 2px;
+            height: 46px;
+        }
+        .qty-btn { width: 35px; height: 100%; border: none; background: transparent; cursor: pointer; font-size: 1rem; }
+        .qty-val { width: 35px; border: none; text-align: center; font-weight: 700; font-size: 0.9rem; }
+        .btn-add-to-cart-lg { 
+            flex: 1; height: 46px; background: #000; color: #fff; border: none; 
+            border-radius: 2px; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+        .btn-add-to-cart-lg:hover { background: #333; }
+
+        /* Tabs/Collapse for Desc */
+        .pd-details-collapse { border-top: 1px solid #eee; margin-top: 35px; }
+        .pd-collapse-item { border-bottom: 1px solid #eee; }
+        .pd-collapse-btn { 
+            width: 100%; padding: 15px 0; border: none; background: transparent;
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* Related Section Optimized */
+        .related-section { margin-top: 80px; }
+        .relatedSwiper { padding-bottom: 30px; }
+        .relatedSwiper .product-card { border: none; }
+        .relatedSwiper .product-card__body { padding-top: 10px; }
+        .relatedSwiper .product-card__name { font-size: 0.8rem; }
+        .relatedSwiper .product-card__price { font-size: 0.85rem; }
+        
+        .custom-nav-btn {
+            width: 28px; height: 28px; background: #fff; border: 1px solid #eee; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+        }
+        .custom-nav-btn svg { width: 14px; height: 14px; }
+
+        @media (max-width: 767px) {
+            .product-detail-container { padding: 20px 0; }
+            .product-info-wrap { padding-left: 0; margin-top: 25px; }
+            .product-main-img { max-width: 100%; }
+        }
     </style>
 </head>
 <body>
 <section layout:fragment="content">
     <main class="product-detail-container">
-        <div class="container-xl">
+        <div class="container-xl px-3 px-md-4">
             <div class="row">
-                <!-- Image Col -->
-                <div class="col-md-6">
-                    <img th:src="${product.mainImageUrl}" th:alt="${product.name}" class="product-main-img" />
+                <!-- Left: Product Images -->
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <div class="pd-image-wrap">
+                        <img th:src="${product.mainImageUrl}" th:alt="${product.name}" class="product-main-img" id="mainProductImage" />
+                    </div>
                 </div>
                 
-                <!-- Info Col -->
-                <div class="col-md-6">
+                <!-- Right: Product Info -->
+                <div class="col-md-6 col-lg-5 offset-lg-1">
                     <div class="product-info-wrap">
-                        <span class="product-category-label" th:text="${product.category.name}">CATEGORY</span>
-                        <h1 class="product-name-detail" th:text="${product.name}">Tên sản phẩm</h1>
+                        <nav aria-label="breadcrumb" class="mb-3">
+                            <ol class="breadcrumb bg-transparent p-0 small">
+                                <li class="breadcrumb-item"><a href="/" class="text-muted">Trang chủ</a></li>
+                                <li class="breadcrumb-item"><a th:href="@{'/Home/' + ${product.category.slug}}" class="text-muted" th:text="${product.category.name}">DANH MỤC</a></li>
+                                <li class="breadcrumb-item active text-dark" aria-current="page">Chi tiết</li>
+                            </ol>
+                        </nav>
+
+                        <h1 class="product-name-detail" th:text="${product.name}">Product Name</h1>
                         
                         <div class="product-price-detail">
-                            <span th:text="${#numbers.formatDecimal(product.salePrice != null ? product.salePrice : product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
-                            <span th:if="${product.salePrice != null}" style="text-decoration: line-through; color: #999; font-size: 1.5rem; margin-left: 15px;" th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                            <span th:classappend="${product.salePrice != null ? 'price-sale' : ''}" 
+                                  th:text="${#numbers.formatDecimal(product.salePrice != null ? product.salePrice : product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                            <span class="price-old" th:if="${product.salePrice != null}" th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
                         </div>
 
-                        <div class="product-short-desc" th:if="${product.shortDescription != null}" th:text="${product.shortDescription}">
-                            Mô tả ngắn về sản phẩm.
+                        <div class="product-short-desc">
+                            <span th:if="${product.shortDescription != null and !product.shortDescription.empty}" th:text="${product.shortDescription}">Short desc.</span>
+                            <span th:unless="${product.shortDescription != null and !product.shortDescription.empty}">
+                                Thiết kế đặc trưng từ bộ sưu tập mới nhất, mang đậm tinh thần streetwear phóng khoáng và tự do của 5THEWAY®.
+                            </span>
                         </div>
 
-                        <div class="stock-status" th:classappend="${product.stock > 0 ? 'stock-in' : 'stock-out'}">
-                            <span th:if="${product.stock > 0}">● CÒN HÀNG (<span th:text="${product.stock}">0</span> sản phẩm)</span>
-                            <span th:unless="${product.stock > 0}">● HẾT HÀNG</span>
-                        </div>
+                        <form th:action="@{/Home/Cart/Add}" method="post" onsubmit="return validateSelection()">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            
+                            <!-- Variant: Color -->
+                            <div class="variant-group" th:if="${product.color != null}">
+                                <span class="variant-label">MÀU SẮC: <span id="colorNameDisplay" style="font-weight: 500; color: #888; text-transform: none;">Chọn một màu</span></span>
+                                <div class="color-swatches">
+                                    <th:block th:each="c : ${#strings.arraySplit(product.color, ',')}">
+                                        <div class="color-swatch-detail" 
+                                             th:style="'background-color: ' + ${#strings.trim(c)}" 
+                                             th:data-color="${#strings.trim(c)}"
+                                             onclick="selectColorDetail(this)"></div>
+                                    </th:block>
+                                </div>
+                                <input type="hidden" name="color" id="selectedColor" value="" />
+                            </div>
+                            
+                            <!-- Variant: Size -->
+                            <div class="variant-group" th:if="${product.sizes != null}">
+                                <span class="variant-label">KÍCH THƯỚC:</span>
+                                <div class="size-chips">
+                                    <th:block th:each="size : ${#strings.arraySplit(product.sizes, ',')}">
+                                        <div class="size-chip" th:text="${#strings.trim(size)}" onclick="selectSize(this)">S</div>
+                                    </th:block>
+                                </div>
+                                <input type="hidden" name="size" id="selectedSize" value="" />
+                            </div>
 
-                        <p class="product-desc-detail" th:text="${product.description}">
-                            Mô tả sản phẩm chi tiết sẽ hiển thị tại đây. Đây là một sản phẩm chất lượng cao của 5THEWAY.
-                        </p>
-
-                        <div th:if="${product.stock > 0}">
-                            <form th:action="@{/Home/Cart/Add}" method="post">
-                                <input type="hidden" name="productId" th:value="${product.id}">
+                            <div class="pd-action-row">
                                 <div class="qty-input-wrap">
-                                    <button type="button" class="qty-btn" onclick="changeQty(-1)">-</button>
+                                    <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
                                     <input type="text" id="quantity" name="quantity" value="1" class="qty-val" readonly />
                                     <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
                                 </div>
-                                
-                                <button type="submit" class="btn-add-to-cart-lg">
-                                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right: 10px; margin-top: -3px;">
-                                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
-                                    </svg>
-                                    THÊM VÀO GIỎ HÀNG
+                                <button type="submit" class="btn-add-to-cart-lg" th:disabled="${product.stock <= 0}">
+                                    <span th:if="${product.stock > 0}">THÊM VÀO GIỎ HÀNG</span>
+                                    <span th:unless="${product.stock > 0}">HẾT HÀNG</span>
                                 </button>
-                            </form>
+                            </div>
+                        </form>
+
+                        <!-- Product Details Collapse -->
+                        <div class="pd-details-collapse">
+                            <div class="pd-collapse-item">
+                                <button class="pd-collapse-btn" type="button" data-toggle="collapse" data-target="#descCollapse">
+                                    Mô tả chi tiết <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <div class="collapse show" id="descCollapse">
+                                    <div class="pb-4 text-muted small" style="line-height: 1.8;">
+                                        <p th:if="${product.description != null and !product.description.empty}" th:text="${product.description}"></p>
+                                        <p th:unless="${product.description != null and !product.description.empty}">
+                                            Chất liệu cao cấp, thoáng mát, phù hợp cho mọi hoạt động. Từng đường kim mũi chỉ được hoàn thiện tỉ mỉ để đem lại trải nghiệm tốt nhất cho người mặc. 
+                                            Sản phẩm chính hãng của 5THEWAY®.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pd-collapse-item">
+                                <button class="pd-collapse-btn" type="button" data-toggle="collapse" data-target="#shippingCollapse">
+                                    Giao hàng & Đổi trả <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <div class="collapse" id="shippingCollapse">
+                                    <div class="pb-4 text-muted small" style="line-height: 1.8;">
+                                        - Miễn phí vận chuyển cho đơn hàng từ 500.000đ.<br>
+                                        - Đổi trả trong vòng 7 ngày kể từ khi nhận hàng.<br>
+                                        - Sản phẩm đổi trả phải còn nguyên tem mác.
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Related Products -->
+            <!-- Related Products Carousel -->
             <div class="related-section">
-                <div class="section-header">
+                <div class="d-flex justify-content-between align-items-end mb-4">
                     <div>
-                        <p class="section-subtitle">Có thể bạn sẽ thích</p>
-                        <h2 class="section-title" style="font-size: 2rem;">SẢN PHẨM LIÊN QUAN</h2>
+                        <p class="section-subtitle mb-1" style="font-size: 0.75rem; letter-spacing: 1px;">COULD BE YOURS</p>
+                        <h2 class="section-title" style="font-size: 1.5rem; margin:0;">SẢN PHẨM LIÊN QUAN</h2>
+                    </div>
+                    <div class="d-flex" style="gap: 8px;">
+                        <div class="swiper-button-prev-related custom-nav-btn">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+                        </div>
+                        <div class="swiper-button-next-related custom-nav-btn">
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M9 5l6 6-6 6"/></svg>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="row g-3">
-                    <th:block th:each="p : ${relatedProducts}" th:if="${p.id != product.id}">
-                        <div class="col-6 col-sm-4 col-lg-3">
-                            <article class="product-card">
-                                <a th:href="@{'/Home/Product/' + ${p.id}}" class="product-card__img-wrap d-block">
-                                    <img th:src="${p.mainImageUrl}" th:alt="${p.name}" loading="lazy" />
-                                </a>
-                                <div class="product-card__body">
-                                    <h3 class="product-card__name" th:text="${p.name}">Product Name</h3>
-                                    <div class="product-card__price-row">
-                                        <span class="product-card__price" th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                <div class="swiper relatedSwiper">
+                    <div class="swiper-wrapper">
+                        <th:block th:each="p : ${relatedProducts}" th:if="${p.id != product.id}">
+                            <div class="swiper-slide">
+                                <article class="product-card">
+                                    <a th:href="@{'/Home/Product/' + ${p.id}}" class="product-card__img-wrap d-block">
+                                        <img th:src="${p.mainImageUrl}" th:alt="${p.name}" loading="lazy" />
+                                    </a>
+                                    <div class="product-card__body px-0">
+                                        <h3 class="product-card__name" style="font-size: 0.85rem;" th:text="${p.name}">Product Name</h3>
+                                        <div class="product-card__price-row">
+                                            <span class="product-card__price" style="font-size: 0.9rem;" th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                                        </div>
                                     </div>
-                                </div>
-                            </article>
-                        </div>
-                    </th:block>
+                                </article>
+                            </div>
+                        </th:block>
+                    </div>
                 </div>
             </div>
 
             <!-- Reviews Section -->
-            <div class="related-section">
+            <div class="related-section mt-5 pt-5 border-top">
                 <div class="row">
-                    <div class="col-md-7">
-                        <h4 class="mb-4" style="font-weight: 700;">ĐÁNH GIÁ TỪ KHÁCH HÀNG</h4>
-                        <div th:if="${#lists.isEmpty(reviews)}" class="text-muted">Chưa có đánh giá nào cho sản phẩm này.</div>
-                        
-                        <div th:each="rev : ${reviews}" class="review-item">
-                            <div class="d-flex justify-content-between mb-2">
-                                <strong th:text="${rev.customerName}">Tên khách hàng</strong>
-                                <span class="text-muted small" th:text="${#temporals.format(rev.createdAt, 'dd/MM/yyyy')}">Date</span>
+                    <div class="col-md-7 mb-5 mb-md-0">
+                        <h4 class="mb-4" style="font-weight: 800; font-size: 1.2rem; letter-spacing: 0.5px;">ĐÁNH GIÁ TỪ KHÁCH HÀNG</h4>
+                        <div th:if="${#lists.isEmpty(reviews)}" class="text-muted small italic">Chưa có đánh giá nào cho sản phẩm này.</div>
+                        <div th:each="rev : ${reviews}" class="review-item border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="font-weight-bold small" th:text="${rev.customerName}">User</span>
+                                <span class="text-muted" style="font-size: 0.7rem;" th:text="${#temporals.format(rev.createdAt, 'dd/MM/yyyy')}">Date</span>
                             </div>
-                            <div class="star-rating mb-2">
-                                <span th:each="i : ${#numbers.sequence(1, 5)}">
-                                    <span th:if="${i <= rev.rating}">★</span>
-                                    <span th:unless="${i <= rev.rating}" style="color:#ddd;">★</span>
-                                </span>
+                            <div class="text-warning mb-2" style="font-size: 0.75rem;">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}" th:text="${i <= rev.rating ? '★' : '☆'}"></span>
                             </div>
-                            <p class="mb-0" th:text="${rev.content}">Nội dung bình luận.</p>
+                            <p class="mb-0 small text-dark" th:text="${rev.content}"></p>
                         </div>
                     </div>
                     
                     <div class="col-md-5">
-                        <div class="card p-4 bg-light" sec:authorize="isAuthenticated()">
-                            <h5 class="mb-3" style="font-weight: 700;">GỬI ĐÁNH GIÁ CỦA BẠN</h5>
+                        <div class="p-4 border rounded" sec:authorize="isAuthenticated()">
+                            <h5 class="mb-3 small font-weight-bold text-uppercase">Gửi đánh giá</h5>
                             <form th:action="@{/Home/Product/Review}" method="post">
                                 <input type="hidden" name="productId" th:value="${product.id}">
                                 <div class="form-group mb-3">
-                                    <label class="small font-weight-bold">Số sao đánh giá</label>
-                                    <select name="rating" class="form-control">
-                                        <option value="5">5 Sao - Rất tốt</option>
-                                        <option value="4">4 Sao - Tốt</option>
+                                    <select name="rating" class="form-control form-control-sm">
+                                        <option value="5">5 Sao - Rất hài lòng</option>
+                                        <option value="4">4 Sao - Hài lòng</option>
                                         <option value="3">3 Sao - Bình thường</option>
-                                        <option value="2">2 Sao - Kém</option>
+                                        <option value="2">2 Sao - Không hài lòng</option>
                                         <option value="1">1 Sao - Rất kém</option>
                                     </select>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <label class="small font-weight-bold">Nội dung bình luận</label>
-                                    <textarea name="content" class="form-control" rows="4" placeholder="Chia sẻ cảm nhận của bạn..." required></textarea>
+                                    <textarea name="content" class="form-control form-control-sm" rows="3" placeholder="Cảm nhận của bạn về sản phẩm..." required></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-dark w-100 py-2" style="font-weight: 600;">GỬI ĐÁNH GIÁ</button>
+                                <button type="submit" class="btn btn-dark btn-sm w-100 font-weight-bold">GỬI ĐÁNH GIÁ</button>
                             </form>
-                        </div>
-                        <div class="card p-4 text-center" sec:authorize="!isAuthenticated()">
-                            <p class="mb-0">Vui lòng <a th:href="@{/login}" class="font-weight-bold text-dark">đăng nhập</a> để gửi đánh giá.</p>
                         </div>
                     </div>
                 </div>
@@ -166,16 +311,59 @@
 </section>
 
 <th:block layout:fragment="scripts">
-    <script>
+    <script th:inline="javascript">
         function changeQty(amt) {
-            let val = parseInt(document.getElementById('quantity').value);
+            let qtyInput = document.getElementById('quantity');
+            let val = parseInt(qtyInput.value);
             val += amt;
             if (val < 1) val = 1;
-            // Check stock limit (max)
             let maxStock = [[${product.stock}]];
             if (val > maxStock) val = maxStock;
-            document.getElementById('quantity').value = val;
+            qtyInput.value = val;
         }
+
+        function selectSize(element) {
+            document.querySelectorAll('.size-chip').forEach(chip => chip.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('selectedSize').value = element.innerText;
+        }
+
+        function selectColorDetail(element) {
+            const color = element.getAttribute('data-color');
+            document.querySelectorAll('.color-swatch-detail').forEach(swatch => swatch.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('colorNameDisplay').innerText = color;
+            document.getElementById('selectedColor').value = color;
+        }
+
+        function validateSelection() {
+            const hasColor = [[${product.color != null}]];
+            const hasSize = [[${product.sizes != null}]];
+            if (hasColor && !document.getElementById('selectedColor').value) {
+                alert("Vui lòng chọn MÀU SẮC!");
+                return false;
+            }
+            if (hasSize && !document.getElementById('selectedSize').value) {
+                alert("Vui lòng chọn KÍCH THƯỚC!");
+                return false;
+            }
+            return true;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            new Swiper('.relatedSwiper', {
+                slidesPerView: 2,
+                spaceBetween: 15,
+                navigation: {
+                    nextEl: '.swiper-button-next-related',
+                    prevEl: '.swiper-button-prev-related',
+                },
+                breakpoints: {
+                    992: { slidesPerView: 4, spaceBetween: 30 },
+                    768: { slidesPerView: 3, spaceBetween: 20 }
+                }
+            });
+        });
     </script>
 </th:block>
 </body>

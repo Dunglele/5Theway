@@ -39,6 +39,9 @@ public class Product {
     @Column(nullable = false)
     private Integer stock; // Số lượng tồn kho
 
+    private String color; // Màu sắc sản phẩm
+    private String sizes; // Các kích thước sẵn có (ví dụ: "S,M,L,XL")
+
     private String mainImageUrl; // Ảnh chính
     private String additionalImages; // Danh sách ảnh phụ, phân cách bởi dấu phẩy
 

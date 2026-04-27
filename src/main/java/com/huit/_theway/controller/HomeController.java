@@ -26,58 +26,73 @@ public class HomeController {
     public String Index(Model model){
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("topProducts", productService.getProductsByCategory("tops"));
-        
-        List<Product> accessories = new ArrayList<>();
-        accessories.addAll(productService.getProductsByCategory("accessories"));
-        accessories.addAll(productService.getProductsByCategory("masks"));
-        accessories.addAll(productService.getProductsByCategory("bags"));
-        accessories.addAll(productService.getProductsByCategory("stickers"));
-        
-        model.addAttribute("allAccessoryProducts", accessories);
+        model.addAttribute("allAccessoryProducts", productService.getProductsByCategory("accessories"));
         return "home/index";
     }
 
-    private void addFilterAttributes(Model model, String slug, Double minPrice, Double maxPrice, String sort) {
-        model.addAttribute("products", productService.getProductsByCategoryFiltered(slug, minPrice, maxPrice, sort));
+    private void addFilterAttributes(Model model, String slug, Double minPrice, Double maxPrice, String sort, String color, String status) {
+        model.addAttribute("category", categoryService.getCategoryBySlug(slug));
+        model.addAttribute("products", productService.getProductsByCategoryFiltered(slug, minPrice, maxPrice, sort, color, status));
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("sort", sort);
+        model.addAttribute("color", color);
+        model.addAttribute("status", status);
     }
 
     @GetMapping("/Home/Tops")
     public String Tops(@RequestParam(required = false) Double minPrice,
                        @RequestParam(required = false) Double maxPrice,
-                       @RequestParam(required = false) String sort, Model model){
-        addFilterAttributes(model, "tops", minPrice, maxPrice, sort);
+                       @RequestParam(required = false) String sort,
+                       @RequestParam(required = false) String color,
+                       @RequestParam(required = false) String status, Model model){
+        addFilterAttributes(model, "tops", minPrice, maxPrice, sort, color, status);
         return "home/tops";
     }
 
     @GetMapping("/Home/Hoodies")
     public String Hoodies(@RequestParam(required = false) Double minPrice,
                           @RequestParam(required = false) Double maxPrice,
-                          @RequestParam(required = false) String sort, Model model){
-        addFilterAttributes(model, "hoodies", minPrice, maxPrice, sort);
+                          @RequestParam(required = false) String sort,
+                          @RequestParam(required = false) String color,
+                          @RequestParam(required = false) String status, Model model){
+        addFilterAttributes(model, "hoodies", minPrice, maxPrice, sort, color, status);
         return "home/hoodies";
     }
 
     @GetMapping("/Home/Jackets")
     public String Jackets(@RequestParam(required = false) Double minPrice,
                           @RequestParam(required = false) Double maxPrice,
-                          @RequestParam(required = false) String sort, Model model){
-        addFilterAttributes(model, "jackets", minPrice, maxPrice, sort);
+                          @RequestParam(required = false) String sort,
+                          @RequestParam(required = false) String color,
+                          @RequestParam(required = false) String status, Model model){
+        addFilterAttributes(model, "jackets", minPrice, maxPrice, sort, color, status);
         return "home/jackets";
     }
 
     @GetMapping("/Home/Accessories")
     public String Accessories(@RequestParam(required = false) Double minPrice,
                               @RequestParam(required = false) Double maxPrice,
-                              @RequestParam(required = false) String sort, Model model){
-        addFilterAttributes(model, "accessories", minPrice, maxPrice, sort);
+                              @RequestParam(required = false) String sort,
+                              @RequestParam(required = false) String color,
+                              @RequestParam(required = false) String status, Model model){
+        addFilterAttributes(model, "accessories", minPrice, maxPrice, sort, color, status);
         return "home/accessories";
     }
 
     @GetMapping("/Home/Outlet")
-    public String Outlet(){
+    public String Outlet(@RequestParam(required = false) Double minPrice,
+                         @RequestParam(required = false) Double maxPrice,
+                         @RequestParam(required = false) String sort,
+                         @RequestParam(required = false) String color,
+                         @RequestParam(required = false) String status, Model model){
+        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("products", productService.getProductsByCategoryFiltered(null, minPrice, maxPrice, sort, color, status));
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("sort", sort);
+        model.addAttribute("color", color);
+        model.addAttribute("status", status);
         return "home/outlet";
     }
 
