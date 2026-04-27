@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -50,5 +51,41 @@ public class UserController {
             redirectAttributes.addFlashAttribute("error", "Đăng ký thất bại: " + e.getMessage());
             return "redirect:/register";
         }
+    }
+
+    @PostMapping("/Home/Profile/Update")
+    public String updateProfile(@RequestParam("fullName") String fullName,
+                                @RequestParam("phoneNumber") String phoneNumber,
+                                @RequestParam("address") String address,
+                                org.springframework.security.core.Authentication auth,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            userService.updateUserProfile(auth.getName(), fullName, phoneNumber, address);
+            redirectAttributes.addFlashAttribute("success", "Cập nhật thông tin thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Cập nhật thất bại: " + e.getMessage());
+        }
+        return "redirect:/Home/Profile";
+    }
+
+    @PostMapping("/Home/Profile/ChangePassword")
+    public String changePassword(@RequestParam("oldPassword") String oldPassword,
+                                 @RequestParam("newPassword") String newPassword,
+                                 @RequestParam("confirmPassword") String confirmPassword,
+                                 org.springframework.security.core.Authentication auth,
+                                 RedirectAttributes redirectAttributes) {
+        
+        if (!newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("error", "Mật khẩu mới xác nhận không khớp!");
+            return "redirect:/Home/Profile";
+        }
+
+        boolean success = userService.changePassword(auth.getName(), oldPassword, newPassword);
+        if (success) {
+            redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công!");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Mật khẩu cũ không chính xác!");
+        }
+        return "redirect:/Home/Profile";
     }
 }

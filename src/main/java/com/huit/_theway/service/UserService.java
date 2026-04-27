@@ -50,6 +50,28 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Transactional
+    public void updateUserProfile(String username, String fullName, String phoneNumber, String address) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user != null) {
+            user.setFullName(fullName);
+            user.setPhoneNumber(phoneNumber);
+            user.setAddress(address);
+            userRepository.save(user);
+        }
+    }
+
+    @Transactional
+    public boolean changePassword(String username, String oldPassword, String newPassword) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user != null && passwordEncoder.matches(oldPassword, user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)

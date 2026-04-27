@@ -1,6 +1,8 @@
 package com.huit._theway.controller;
 
 import com.huit._theway.model.Product;
+import com.huit._theway.model.User;
+import com.huit._theway.repository.UserRepository;
 import com.huit._theway.service.CategoryService;
 import com.huit._theway.service.OrderService;
 import com.huit._theway.service.ProductService;
@@ -21,6 +23,7 @@ public class HomeController {
     private final CategoryService categoryService;
     private final ReviewService reviewService;
     private final OrderService orderService;
+    private final UserRepository userRepository;
 
     @GetMapping("/")
     public String Index(Model model){
@@ -159,6 +162,9 @@ public class HomeController {
     @GetMapping("/Home/Profile")
     public String userProfile(org.springframework.security.core.Authentication auth, Model model) {
         if (auth != null && auth.isAuthenticated()) {
+            String username = auth.getName();
+            User user = userRepository.findByUsername(username).orElse(null);
+            model.addAttribute("user", user);
             return "home/profile";
         }
         return "redirect:/login";
