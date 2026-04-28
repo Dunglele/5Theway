@@ -52,6 +52,12 @@
         @media (max-width: 991px) {
             .order-summary-card { margin-top: 40px; position: static; }
         }
+
+        @media (max-width: 575px) {
+            .pay-method-wrap { grid-template-columns: 1fr; }
+            .summary-item { grid-template-columns: 60px 1fr; }
+            .item-price { grid-column: span 2; text-align: right; margin-top: 5px; padding-top: 10px; border-top: 1px dashed #eee; }
+        }
     </style>
 </head>
 <body>
