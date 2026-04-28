@@ -29,14 +29,16 @@ public class ProductService {
         return productRepository.findByCategorySlug(slug);
     }
 
-    public List<Product> getProductsByCategoryFiltered(String slug, Double minPrice, Double maxPrice, String sort, String color, String status) {
-        List<Product> products;
-        if (slug == null || slug.isEmpty() || slug.equalsIgnoreCase("all")) {
-            products = productRepository.findAll();
-        } else {
-            products = productRepository.findByCategorySlug(slug);
-        }
-        
+    public List<Product> searchProducts(String keyword) {
+        return productRepository.findByNameContainingIgnoreCase(keyword);
+    }
+
+    public List<Product> searchProductsFiltered(String keyword, Double minPrice, Double maxPrice, String sort, String color, String status) {
+        List<Product> products = productRepository.findByNameContainingIgnoreCase(keyword);
+        return applyFilters(products, minPrice, maxPrice, sort, color, status);
+    }
+
+    private List<Product> applyFilters(List<Product> products, Double minPrice, Double maxPrice, String sort, String color, String status) {
         // 1. Lọc theo giá
         if (minPrice != null || maxPrice != null) {
             products = products.stream()
@@ -65,7 +67,7 @@ public class ProductService {
                 products = products.stream().filter(p -> p.getStock() > 0 && p.getStock() < 15).collect(java.util.stream.Collectors.toList());
             }
         }
-        
+
         // 4. Sắp xếp
         if (sort != null) {
             switch (sort) {
@@ -84,16 +86,24 @@ public class ProductService {
                     });
                     break;
                 case "newest":
-                    products.sort((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()));
+                    products.sort((p1, p2) -> {
+                        if (p1.getCreatedAt() == null || p2.getCreatedAt() == null) return 0;
+                        return p2.getCreatedAt().compareTo(p1.getCreatedAt());
+                    });
                     break;
             }
         }
-        
         return products;
     }
 
-    public List<Product> searchProducts(String keyword) {
-        return productRepository.findByNameContainingIgnoreCase(keyword);
+    public List<Product> getProductsByCategoryFiltered(String slug, Double minPrice, Double maxPrice, String sort, String color, String status) {
+        List<Product> products;
+        if (slug == null || slug.isEmpty() || slug.equalsIgnoreCase("all")) {
+            products = productRepository.findAll();
+        } else {
+            products = productRepository.findByCategorySlug(slug);
+        }
+        return applyFilters(new java.util.ArrayList<>(products), minPrice, maxPrice, sort, color, status);
     }
 
     public Product getProductById(Long id) {

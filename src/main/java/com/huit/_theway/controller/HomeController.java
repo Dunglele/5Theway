@@ -136,9 +136,20 @@ public class HomeController {
     }
 
     @GetMapping("/Home/Search")
-    public String Search(@RequestParam("keyword") String keyword, Model model) {
+    public String Search(@RequestParam("keyword") String keyword,
+                         @RequestParam(required = false) Double minPrice,
+                         @RequestParam(required = false) Double maxPrice,
+                         @RequestParam(required = false) String sort,
+                         @RequestParam(required = false) String color,
+                         @RequestParam(required = false) String status, Model model) {
         model.addAttribute("keyword", keyword);
-        model.addAttribute("products", productService.searchProducts(keyword));
+        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("products", productService.searchProductsFiltered(keyword, minPrice, maxPrice, sort, color, status));
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("sort", sort);
+        model.addAttribute("color", color);
+        model.addAttribute("status", status);
         return "home/search-results";
     }
 

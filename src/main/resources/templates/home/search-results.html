@@ -3,49 +3,237 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Kết quả tìm kiếm - _5theway</title>
+    <title th:text="'Kết quả cho: ' + ${keyword}">Kết quả tìm kiếm</title>
+    <style>
+        .color-swatches { display: flex; flex-wrap: wrap; gap: 8px; padding: 5px 0; }
+        .color-swatch { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; cursor: pointer; transition: transform 0.2s; }
+        .color-swatch:hover { transform: scale(1.2); }
+        .color-swatch.active-border { outline: 2px solid var(--black); outline-offset: 2px; transform: scale(1.1); }
+        .filter-cat-list { list-style: none; padding: 0; margin: 0; }
+        .filter-cat-list li a { display: block; padding: 6px 0; color: var(--gray-muted); font-size: 13px; transition: color 0.2s; text-decoration:none; }
+        .filter-cat-list li a:hover, .filter-cat-list li a.active { color: var(--black); font-weight: 600; }
+    </style>
 </head>
 <body>
 <section layout:fragment="content">
-    <main style="padding: 120px 0 60px;">
-        <div class="container-xl">
-            <div class="section-header">
-                <div>
-                    <p class="section-subtitle">Tìm kiếm</p>
-                    <h2 class="section-title" style="font-size: 2rem;">KẾT QUẢ CHO: "<span th:text="${keyword}"></span>"</h2>
+    <main>
+        <div class="container-xl px-3 px-md-4" style="padding-top:20px;padding-bottom:60px;">
+            <h1 class="mb-4 h4">Kết quả tìm kiếm cho: <span class="text-primary" th:text="${keyword}"></span></h1>
+
+            <div class="cat-toolbar">
+                <div class="cat-toolbar__left">
+                    <button class="btn-filter-toggle active" id="filterToggle">
+                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+                        </svg>
+                        Bộ lọc
+                    </button>
+                    <span class="result-count" th:text="${#lists.size(products)} + ' sản phẩm'">0 sản phẩm</span>
+                </div>
+                <div class="cat-toolbar__right">
+                    <form id="sortForm" method="get" th:action="@{/Home/Search}">
+                        <input type="hidden" name="keyword" th:value="${keyword}">
+                        <input type="hidden" name="minPrice" th:value="${minPrice}">
+                        <input type="hidden" name="maxPrice" th:value="${maxPrice}">
+                        <input type="hidden" name="color" th:value="${color}">
+                        <input type="hidden" name="status" th:value="${status}">
+                        <select class="sort-select" name="sort" onchange="this.form.submit()">
+                            <option value="default" th:selected="${sort == 'default' or sort == null}">Mặc định</option>
+                            <option value="priceAsc" th:selected="${sort == 'priceAsc'}">Giá: Thấp → Cao</option>
+                            <option value="priceDesc" th:selected="${sort == 'priceDesc'}">Giá: Cao → Thấp</option>
+                            <option value="newest" th:selected="${sort == 'newest'}">Mới nhất</option>
+                        </select>
+                    </form>
                 </div>
             </div>
 
-            <div th:if="${#lists.isEmpty(products)}" class="text-center" style="padding: 100px 0;">
-                <h3 class="text-muted">Không tìm thấy sản phẩm nào phù hợp.</h3>
-                <a href="/" class="btn btn-dark mt-4">QUAY LẠI TRANG CHỦ</a>
+            <!-- Mobile Sticky Toolbar -->
+            <div class="mobile-sticky-toolbar d-lg-none">
+                <button type="button" class="mobile-sticky-btn" onclick="document.getElementById('filterToggle').click()">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path d="M4 6h16M8 12h8M11 18h2"/>
+                    </svg>
+                    Bộ lọc
+                </button>
+                <div class="mobile-sticky-sep"></div>
+                <button type="button" class="mobile-sticky-btn" onclick="document.querySelector('.sort-select').focus()">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path d="M3 10h10M3 6h18M3 14h6m8 2V4m0 0l-3 3m3-3l3 3m-3 13v-8m0 0l-3 3m3-3l3 3"/>
+                    </svg>
+                    Sắp xếp
+                </button>
             </div>
 
-            <div class="row g-3" th:unless="${#lists.isEmpty(products)}">
-                <th:block th:each="product : ${products}">
-                    <div class="col-6 col-sm-4 col-lg-3">
-                        <article class="product-card">
-                            <a th:href="@{'/Home/Product/' + ${product.id}}" class="product-card__img-wrap d-block">
-                                <img th:src="${product.mainImageUrl}" th:alt="${product.name}" loading="lazy" />
-                            </a>
-                            <div class="product-card__body">
-                                <h3 class="product-card__name" th:text="${product.name}">Product Name</h3>
-                                <div class="product-card__price-row">
-                                    <span class="product-card__price" th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+            <div class="cat-layout">
+                <!-- SIDEBAR -->
+                <aside class="filter-sidebar" id="filterSidebar">
+                    <form id="mainFilterForm" method="get" th:action="@{/Home/Search}">
+                        <div class="filter-sidebar__header">
+                            <h2 class="filter-sidebar__title">Bộ lọc</h2>
+                            <button type="button" class="filter-close" id="filterClose">
+                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="filter-sidebar__scroll-area">
+                            <input type="hidden" name="keyword" th:value="${keyword}">
+                            <input type="hidden" name="sort" th:value="${sort}">
+                            <input type="hidden" name="color" id="hiddenColor" th:value="${color}">
+
+                            <div style="padding: 10px 20px;" class="d-lg-none">
+                                <a th:href="@{/Home/Search(keyword=${keyword})}" class="btn-clear-all" style="font-size: 11px; text-decoration: underline;">Xoá tất cả bộ lọc</a>
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div class="filter-group open">
+                                <button class="filter-group__trigger" type="button" onclick="toggleFilterGroup(this)">
+                                    Danh mục
+                                    <svg class="filter-group__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:12px; margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg>
+                                </button>
+                                <div class="filter-group__body">
+                                    <ul class="filter-cat-list">
+                                        <li th:each="cat : ${categories}">
+                                            <a th:href="@{'/Home/' + ${#strings.capitalize(cat.slug)}}">
+                                                <span th:text="${cat.name}">Danh mục</span>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
+
+                            <!-- Color Filter -->
+                            <div class="filter-group open">
+                                <button class="filter-group__trigger" type="button" onclick="toggleFilterGroup(this)">
+                                    Màu sắc
+                                    <svg class="filter-group__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:12px; margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg>
+                                </button>
+                                <div class="filter-group__body">
+                                    <div class="color-swatches">
+                                        <div class="color-swatch" th:classappend="${color == 'Black' ? 'active-border' : ''}" style="background:#0a0a0a;" title="BLACK" data-color="Black" onclick="selectColor(this)"></div>
+                                        <div class="color-swatch" th:classappend="${color == 'White' ? 'active-border' : ''}" style="background:#f8f8f6;border-color:#ccc;" title="WHITE" data-color="White" onclick="selectColor(this)"></div>
+                                        <div class="color-swatch" th:classappend="${color == 'Gold' ? 'active-border' : ''}" style="background:#d4a017;" title="GOLD" data-color="Gold" onclick="selectColor(this)"></div>
+                                        <div class="color-swatch" th:classappend="${color == 'Caramel' ? 'active-border' : ''}" style="background:#8b6914;" title="CARAMEL" data-color="Caramel" onclick="selectColor(this)"></div>
+                                        <div class="color-swatch" th:classappend="${color == 'Purple' ? 'active-border' : ''}" style="background:#7c3aed;" title="PURPLE" data-color="Purple" onclick="selectColor(this)"></div>
+                                        <div class="color-swatch" th:classappend="${color == 'Pink' ? 'active-border' : ''}" style="background:#f9a8d4;" title="PINK" data-color="Pink" onclick="selectColor(this)"></div>
+                                        <div class="color-swatch" th:classappend="${color == 'Blue' ? 'active-border' : ''}" style="background:#3b82f6;" title="BLUE" data-color="Blue" onclick="selectColor(this)"></div>
+                                        <div class="color-swatch" th:classappend="${color == 'Red' ? 'active-border' : ''}" style="background:#dc2626;" title="RED" data-color="Red" onclick="selectColor(this)"></div>
+                                        <div class="color-swatch" th:classappend="${color == 'Grey' ? 'active-border' : ''}" style="background:#9ca3af;" title="GREY" data-color="Grey" onclick="selectColor(this)"></div>
+                                        <div class="color-swatch" th:classappend="${color == 'Khaki' ? 'active-border' : ''}" style="background:#d1c5b0;" title="KHAKI" data-color="Khaki" onclick="selectColor(this)"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Price Filter -->
+                            <div class="filter-group open">
+                                <button class="filter-group__trigger" type="button" onclick="toggleFilterGroup(this)">
+                                    Khoảng giá
+                                    <svg class="filter-group__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:12px; margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg>
+                                </button>
+                                <div class="filter-group__body">
+                                    <div class="price-range-inputs">
+                                        <input type="number" name="minPrice" th:value="${minPrice}" placeholder="Từ" min="0" step="10000" />
+                                        <span class="price-dash">—</span>
+                                        <input type="number" name="maxPrice" th:value="${maxPrice}" placeholder="Đến" min="0" step="10000" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status Filter -->
+                            <div class="filter-group open">
+                                <button class="filter-group__trigger" type="button" onclick="toggleFilterGroup(this)">
+                                    Tình trạng
+                                    <svg class="filter-group__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:12px; margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg>
+                                </button>
+                                <div class="filter-group__body">
+                                    <ul class="filter-cat-list">
+                                        <li>
+                                            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-muted);padding:7px 0;">
+                                                <input type="radio" name="status" value="inStock" th:checked="${status == 'inStock'}" style="accent-color:var(--black);width:14px;height:14px;" /> Còn hàng
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-muted);padding:7px 0;">
+                                                <input type="radio" name="status" value="lowStock" th:checked="${status == 'lowStock'}" style="accent-color:var(--black);width:14px;height:14px;" /> Sắp hết hàng
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-muted);padding:7px 0;">
+                                                <input type="radio" name="status" value="" th:checked="${status == null or status == ''}" style="accent-color:var(--black);width:14px;height:14px;" /> Tất cả
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-sidebar__footer">
+                            <a th:href="@{/Home/Search(keyword=${keyword})}" class="btn-reset-mobile">Thiết lập lại</a>
+                            <button type="submit" class="btn-apply-mobile">Áp dụng</button>
+                        </div>
+                    </form>
+                </aside>
+
+                <!-- PRODUCTS -->
+                <section style="flex:1;">
+                    <div th:if="${#lists.isEmpty(products)}" class="py-5 text-center">
+                        <p class="text-muted">Không tìm thấy sản phẩm nào phù hợp với bộ lọc hiện tại.</p>
+                        <a th:href="@{/Home/Search(keyword=${keyword})}" class="btn btn-outline-dark btn-sm mt-2">Xóa tất cả bộ lọc</a>
+                    </div>
+                    <div class="products-grid grid-4">
+                        <th:block th:each="product : ${products}">
+                            <article class="product-card">
+                                <a th:href="@{'/Home/Product/' + ${product.id}}" class="product-card__img-wrap d-block">
+                                    <img th:src="${product.mainImageUrl}" th:alt="${product.name}" loading="lazy" />
+                                    <span th:if="${product.stock < 15}" class="product-card__badge badge-low">Sắp hết</span>
+                                    <span th:if="${product.newArrival}" class="product-card__badge badge-new" th:unless="${product.stock < 15}">New</span>
+                                </a>
+                                <div class="product-card__body">
+                                    <a th:href="@{'/Home/Product/' + ${product.id}}">
+                                        <h3 class="product-card__name" th:text="${product.name}">Product Name</h3>
+                                    </a>
+                                    <div class="product-card__price-row">
+                                        <span class="product-card__price" th:text="${#numbers.formatDecimal(product.salePrice != null ? product.salePrice : product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                                        <span class="product-card__old-price" th:if="${product.salePrice != null}" th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                                    </div>
+                                </div>
                                 <div class="product-card__footer">
                                     <a th:href="@{'/Home/Product/' + ${product.id}}" class="btn-add-cart" style="text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px;">
                                         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c3.55 0 6.715 1.832 8.542 4.636a2 2 0 010 2.728C18.715 15.168 15.55 17 12 17c-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                         Xem chi tiết
                                     </a>
                                 </div>
-                        </article>
+                            </article>
+                        </th:block>
                     </div>
-                </th:block>
+                </section>
             </div>
         </div>
     </main>
 </section>
+
+<th:block layout:fragment="scripts">
+    <script>
+        function toggleFilterGroup(button) {
+            const group = button.parentElement;
+            group.classList.toggle('open');
+        }
+
+        function selectColor(element) {
+            const color = element.getAttribute('data-color');
+            const hiddenInput = document.getElementById('hiddenColor');
+            
+            if (hiddenInput.value === color) {
+                hiddenInput.value = "";
+                element.classList.remove('active-border');
+            } else {
+                document.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('active-border'));
+                hiddenInput.value = color;
+                element.classList.add('active-border');
+            }
+        }
+    </script>
+</th:block>
 </body>
 </html>

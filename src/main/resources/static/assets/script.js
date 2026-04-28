@@ -126,28 +126,51 @@ function observeCards(scope = document) {
 /* ── Expose global namespace ──────────────────────────────── */
 window.FTW = { fmt, showToast, togglePass, updateCartBadge, observeCards };
 
-/* ── Navbar — mobile menu ─────────────────────────────────── */
+/* ── Navbar — mobile menu & search ─────────────────────────── */
 (function initNav() {
     const menuToggle = document.getElementById('menuToggle');
     const menuClose = document.getElementById('menuClose');
     const mobileMenu = document.getElementById('mobileMenu');
     const overlay = document.getElementById('overlay');
     const searchToggle = document.getElementById('searchToggle');
-    const searchClose = document.getElementById('searchClose');
-    const searchOverlay = document.getElementById('searchOverlay');
+    const searchWrapper = document.getElementById('searchWrapper');
+    const searchInput = document.getElementById('searchNavInput');
     const navbar = document.querySelector('.navbar-5w');
 
     const openMenu = () => { mobileMenu?.classList.add('open'); overlay?.classList.add('show'); document.body.style.overflow = 'hidden'; menuToggle?.setAttribute('aria-expanded', 'true'); };
     const closeMenu = () => { mobileMenu?.classList.remove('open'); overlay?.classList.remove('show'); document.body.style.overflow = ''; menuToggle?.setAttribute('aria-expanded', 'false'); };
-    const openSearch = () => { searchOverlay?.classList.add('open'); document.body.style.overflow = 'hidden'; setTimeout(() => searchOverlay?.querySelector('.search-input')?.focus(), 300); };
-    const closeSearch = () => { searchOverlay?.classList.remove('open'); document.body.style.overflow = ''; };
 
     menuToggle?.addEventListener('click', openMenu);
     menuClose?.addEventListener('click', closeMenu);
-    searchToggle?.addEventListener('click', openSearch);
-    searchClose?.addEventListener('click', closeSearch);
-    overlay?.addEventListener('click', () => { closeMenu(); closeSearch(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeSearch(); } });
+
+    searchToggle?.addEventListener('click', function(e) {
+        if (!searchWrapper?.classList.contains('active')) {
+            e.preventDefault();
+            searchWrapper?.classList.add('active');
+            searchInput?.focus();
+        } else {
+            if (!searchInput?.value.trim()) {
+                e.preventDefault();
+                searchWrapper?.classList.remove('active');
+            }
+            // Nếu có dữ liệu, trình duyệt sẽ tự submit form vì nút là type="submit"
+        }
+    });
+
+    // Đóng search khi click ra ngoài
+    document.addEventListener('click', e => {
+        if (searchWrapper?.classList.contains('active') && !searchWrapper.contains(e.target)) {
+            searchWrapper.classList.remove('active');
+        }
+    });
+
+    overlay?.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', e => { 
+        if (e.key === 'Escape') { 
+            closeMenu(); 
+            searchWrapper?.classList.remove('active');
+        } 
+    });
 
     if (navbar) {
         window.addEventListener('scroll', () => {
@@ -192,8 +215,75 @@ document.addEventListener('click', e => {
     setTimeout(() => { btn.innerHTML = orig; btn.style.cssText = ''; }, 1800);
 });
 
-/* ── Init shared card observer on load ───────────────────── */
+/* ── Shared card observer on load ───────────────────── */
 document.addEventListener('DOMContentLoaded', () => observeCards());
+
+/* ── Global Filter Helpers (Mobile & Server-side) ────────── */
+window.toggleFilterGroup = function(button) {
+    const group = button.parentElement;
+    group.classList.toggle('open');
+};
+
+window.selectColor = function(element) {
+    const color = element.getAttribute('data-color');
+    const hiddenInput = document.getElementById('hiddenColor');
+    if (!hiddenInput) return;
+    
+    if (hiddenInput.value === color) {
+        hiddenInput.value = "";
+        element.classList.remove('active-border');
+    } else {
+        document.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('active-border'));
+        hiddenInput.value = color;
+        element.classList.add('active-border');
+    }
+};
+
+(function initSharedUI() {
+    function initMobileFilter() {
+        const toggleBtn = document.getElementById('filterToggle');
+        const sidebar = document.getElementById('filterSidebar');
+        const closeBtn = document.getElementById('filterClose');
+        const overlay = document.getElementById('overlay');
+
+        if (!toggleBtn || !sidebar) return;
+
+        const openFilter = () => {
+            sidebar.classList.add('active');
+            toggleBtn.classList.add('active');
+            if (overlay) overlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeFilter = () => {
+            sidebar.classList.remove('active');
+            toggleBtn.classList.remove('active');
+            if (overlay) overlay.classList.remove('show');
+            document.body.style.overflow = '';
+        };
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.contains('active') ? closeFilter() : openFilter();
+        });
+
+        if (closeBtn) closeBtn.addEventListener('click', closeFilter);
+        if (overlay) overlay.addEventListener('click', closeFilter);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeFilter(); });
+    }
+
+    function initBackTop() {
+        const btn = document.querySelector('.back-to-top');
+        if (!btn) return;
+        window.addEventListener('scroll', () => { btn.classList.toggle('show', window.scrollY > 400); }, { passive: true });
+        btn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initMobileFilter();
+        initBackTop();
+    });
+}());
 
 
 /* ============================================================
