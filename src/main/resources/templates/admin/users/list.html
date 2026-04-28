@@ -7,9 +7,15 @@
 </head>
 <body>
 <section layout:fragment="content">
-    <div class="mb-4">
-        <h2 style="font-weight: 800; letter-spacing: -1px;">QUẢN LÝ NGƯỜI DÙNG</h2>
-        <p class="text-muted small">Danh sách tài khoản khách hàng và quản trị viên trên hệ thống.</p>
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h2 style="font-weight: 800; letter-spacing: -1px;">QUẢN LÝ NGƯỜI DÙNG</h2>
+            <p class="text-muted small m-0">Danh sách tài khoản khách hàng và quản trị viên trên hệ thống.</p>
+        </div>
+        <form method="get" class="form-inline m-0">
+            <input type="text" name="keyword" th:value="${keyword}" class="form-control mr-2" placeholder="Tìm kiếm mã hoặc tên...">
+            <button class="btn btn-outline-dark" type="submit">Tìm</button>
+        </form>
     </div>
 
     <div class="card">
@@ -58,6 +64,21 @@
                     </tbody>
                 </table>
             </div>
+            
+            <nav th:if="${totalPages > 1}" class="mt-4 mb-3">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{''(keyword=${keyword}, page=${currentPage - 1})}">Trang trước</a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${currentPage == i ? 'active' : ''}">
+                        <a class="page-link" th:href="@{''(keyword=${keyword}, page=${i})}" th:text="${i}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{''(keyword=${keyword}, page=${currentPage + 1})}">Trang sau</a>
+                    </li>
+                </ul>
+            </nav>
+
         </div>
     </div>
 </section>

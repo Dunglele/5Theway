@@ -27,7 +27,7 @@
                         </svg>
                         Bộ lọc
                     </button>
-                    <span class="result-count" th:text="${#lists.size(products)} + ' sản phẩm'">0 sản phẩm</span>
+                    <span class="result-count" th:text="${totalItems} + ' sản phẩm'">0 sản phẩm</span>
                 </div>
                 <div class="cat-toolbar__right">
                     <form id="sortForm" method="get" th:action="@{/Home/Tops}">
@@ -199,6 +199,31 @@
                                 </div>
                             </article>
                         </th:block>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div th:if="${totalPages > 1}" class="mt-5 pb-4">
+                        <ul class="pagination justify-content-center">
+                            <!-- Previous -->
+                            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                <a class="page-link text-dark font-weight-bold" 
+                                   th:href="@{${#httpServletRequest.requestURI}(page=${currentPage - 1}, sort=${sort}, minPrice=${minPrice}, maxPrice=${maxPrice}, color=${color}, status=${status})}" 
+                                   tabindex="-1">«</a>
+                            </li>
+                            <!-- Page Numbers -->
+                            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+                                class="page-item" th:classappend="${currentPage == i ? 'active' : ''}">
+                                <a class="page-link font-weight-bold" 
+                                   th:classappend="${currentPage == i ? 'bg-dark border-dark text-white' : 'text-dark'}"
+                                   th:href="@{${#httpServletRequest.requestURI}(page=${i}, sort=${sort}, minPrice=${minPrice}, maxPrice=${maxPrice}, color=${color}, status=${status})}" 
+                                   th:text="${i + 1}">1</a>
+                            </li>
+                            <!-- Next -->
+                            <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                <a class="page-link text-dark font-weight-bold" 
+                                   th:href="@{${#httpServletRequest.requestURI}(page=${currentPage + 1}, sort=${sort}, minPrice=${minPrice}, maxPrice=${maxPrice}, color=${color}, status=${status})}">»</a>
+                            </li>
+                        </ul>
                     </div>
                 </section>
             </div>

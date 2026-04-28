@@ -3,6 +3,8 @@ package com.huit._theway.controller;
 import com.huit._theway.model.Category;
 import com.huit._theway.model.Product;
 import com.huit._theway.model.Order;
+import com.huit._theway.model.Review;
+import com.huit._theway.model.User;
 import com.huit._theway.service.CategoryService;
 import com.huit._theway.service.OrderService;
 import com.huit._theway.service.ProductService;
@@ -71,8 +73,14 @@ public class AdminController {
 
     // --- QUẢN LÝ DANH MỤC ---
     @GetMapping("/categories")
-    public String listCategories(Model model) {
-        model.addAttribute("categories", categoryService.getAllCategories());
+    public String listCategories(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+                                 @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                                 Model model) {
+        org.springframework.data.domain.Page<Category> categoryPage = categoryService.searchAndPaginate(keyword, page - 1, 10);
+        model.addAttribute("categories", categoryPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", categoryPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
         return "admin/categories/list";
     }
 
@@ -104,8 +112,14 @@ public class AdminController {
 
     // --- QUẢN LÝ SẢN PHẨM ---
     @GetMapping("/products")
-    public String listProducts(Model model) {
-        model.addAttribute("products", productService.searchProducts("")); 
+    public String listProducts(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+                               @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                               Model model) {
+        org.springframework.data.domain.Page<Product> productPage = productService.searchAndPaginateAdmin(keyword, page - 1, 10);
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
         return "admin/products/list";
     }
 
@@ -168,8 +182,14 @@ public class AdminController {
 
     // --- QUẢN LÝ NGƯỜI DÙNG ---
     @GetMapping("/users")
-    public String listUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
+    public String listUsers(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+                            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                            Model model) {
+        org.springframework.data.domain.Page<User> userPage = userService.searchAndPaginate(keyword, page - 1, 10);
+        model.addAttribute("users", userPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", userPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
         return "admin/users/list";
     }
 
@@ -181,8 +201,14 @@ public class AdminController {
 
     // --- QUẢN LÝ ĐƠN HÀNG ---
     @GetMapping("/orders")
-    public String listOrders(Model model) {
-        model.addAttribute("orders", orderService.getAllOrders());
+    public String listOrders(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+                             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                             Model model) {
+        org.springframework.data.domain.Page<Order> orderPage = orderService.searchAndPaginate(keyword, page - 1, 10);
+        model.addAttribute("orders", orderPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", orderPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
         return "admin/orders/list";
     }
 
@@ -195,8 +221,14 @@ public class AdminController {
 
     // --- QUẢN LÝ ĐÁNH GIÁ ---
     @GetMapping("/reviews")
-    public String listReviews(Model model) {
-        model.addAttribute("reviews", reviewService.getAllReviews());
+    public String listReviews(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+                              @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                              Model model) {
+        org.springframework.data.domain.Page<Review> reviewPage = reviewService.searchAndPaginate(keyword, page - 1, 10);
+        model.addAttribute("reviews", reviewPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", reviewPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
         return "admin/reviews/list";
     }
 

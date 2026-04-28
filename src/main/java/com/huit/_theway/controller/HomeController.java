@@ -33,9 +33,13 @@ public class HomeController {
         return "home/index";
     }
 
-    private void addFilterAttributes(Model model, String slug, Double minPrice, Double maxPrice, String sort, String color, String status) {
+    private void addFilterAttributes(Model model, String slug, Double minPrice, Double maxPrice, String sort, String color, String status, int page) {
+        org.springframework.data.domain.Page<Product> productPage = productService.getProductsByCategoryFiltered(slug, minPrice, maxPrice, sort, color, status, page, 18);
         model.addAttribute("category", categoryService.getCategoryBySlug(slug));
-        model.addAttribute("products", productService.getProductsByCategoryFiltered(slug, minPrice, maxPrice, sort, color, status));
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("sort", sort);
@@ -48,8 +52,9 @@ public class HomeController {
                        @RequestParam(required = false) Double maxPrice,
                        @RequestParam(required = false) String sort,
                        @RequestParam(required = false) String color,
-                       @RequestParam(required = false) String status, Model model){
-        addFilterAttributes(model, "tops", minPrice, maxPrice, sort, color, status);
+                       @RequestParam(required = false) String status, 
+                       @RequestParam(defaultValue = "0") int page, Model model){
+        addFilterAttributes(model, "tops", minPrice, maxPrice, sort, color, status, page);
         return "home/tops";
     }
 
@@ -58,8 +63,9 @@ public class HomeController {
                           @RequestParam(required = false) Double maxPrice,
                           @RequestParam(required = false) String sort,
                           @RequestParam(required = false) String color,
-                          @RequestParam(required = false) String status, Model model){
-        addFilterAttributes(model, "hoodies", minPrice, maxPrice, sort, color, status);
+                          @RequestParam(required = false) String status, 
+                          @RequestParam(defaultValue = "0") int page, Model model){
+        addFilterAttributes(model, "hoodies", minPrice, maxPrice, sort, color, status, page);
         return "home/hoodies";
     }
 
@@ -68,8 +74,9 @@ public class HomeController {
                           @RequestParam(required = false) Double maxPrice,
                           @RequestParam(required = false) String sort,
                           @RequestParam(required = false) String color,
-                          @RequestParam(required = false) String status, Model model){
-        addFilterAttributes(model, "jackets", minPrice, maxPrice, sort, color, status);
+                          @RequestParam(required = false) String status, 
+                          @RequestParam(defaultValue = "0") int page, Model model){
+        addFilterAttributes(model, "jackets", minPrice, maxPrice, sort, color, status, page);
         return "home/jackets";
     }
 
@@ -78,8 +85,9 @@ public class HomeController {
                               @RequestParam(required = false) Double maxPrice,
                               @RequestParam(required = false) String sort,
                               @RequestParam(required = false) String color,
-                              @RequestParam(required = false) String status, Model model){
-        addFilterAttributes(model, "accessories", minPrice, maxPrice, sort, color, status);
+                              @RequestParam(required = false) String status, 
+                              @RequestParam(defaultValue = "0") int page, Model model){
+        addFilterAttributes(model, "accessories", minPrice, maxPrice, sort, color, status, page);
         return "home/accessories";
     }
 
@@ -88,9 +96,14 @@ public class HomeController {
                          @RequestParam(required = false) Double maxPrice,
                          @RequestParam(required = false) String sort,
                          @RequestParam(required = false) String color,
-                         @RequestParam(required = false) String status, Model model){
+                         @RequestParam(required = false) String status, 
+                         @RequestParam(defaultValue = "0") int page, Model model){
         model.addAttribute("categories", categoryService.getAllCategories());
-        model.addAttribute("products", productService.getProductsByCategoryFiltered(null, minPrice, maxPrice, sort, color, status));
+        org.springframework.data.domain.Page<Product> productPage = productService.getProductsByCategoryFiltered(null, minPrice, maxPrice, sort, color, status, page, 18);
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("sort", sort);
@@ -141,10 +154,15 @@ public class HomeController {
                          @RequestParam(required = false) Double maxPrice,
                          @RequestParam(required = false) String sort,
                          @RequestParam(required = false) String color,
-                         @RequestParam(required = false) String status, Model model) {
+                         @RequestParam(required = false) String status, 
+                         @RequestParam(defaultValue = "0") int page, Model model) {
         model.addAttribute("keyword", keyword);
         model.addAttribute("categories", categoryService.getAllCategories());
-        model.addAttribute("products", productService.searchProductsFiltered(keyword, minPrice, maxPrice, sort, color, status));
+        org.springframework.data.domain.Page<Product> productPage = productService.searchProductsFiltered(keyword, minPrice, maxPrice, sort, color, status, page, 18);
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("sort", sort);

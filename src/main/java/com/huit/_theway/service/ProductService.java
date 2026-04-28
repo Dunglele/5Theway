@@ -29,13 +29,35 @@ public class ProductService {
         return productRepository.findByCategorySlug(slug);
     }
 
+    public org.springframework.data.domain.Page<Product> searchAndPaginateAdmin(String keyword, int page, int size) {
+        List<Product> all = productRepository.findAll();
+        String lowerKeyword = keyword != null ? keyword.toLowerCase() : "";
+        List<Product> filtered = all.stream()
+                .filter(p -> p.getId().toString().contains(lowerKeyword) || (p.getName() != null && p.getName().toLowerCase().contains(lowerKeyword)))
+                .collect(java.util.stream.Collectors.toList());
+
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filtered.size());
+        List<Product> pageContent = (start <= end && start < filtered.size()) ? filtered.subList(start, end) : new java.util.ArrayList<>();
+
+        return new org.springframework.data.domain.PageImpl<>(pageContent, pageable, filtered.size());
+    }
+
     public List<Product> searchProducts(String keyword) {
         return productRepository.findByNameContainingIgnoreCase(keyword);
     }
 
-    public List<Product> searchProductsFiltered(String keyword, Double minPrice, Double maxPrice, String sort, String color, String status) {
+    public org.springframework.data.domain.Page<Product> searchProductsFiltered(String keyword, Double minPrice, Double maxPrice, String sort, String color, String status, int page, int size) {
         List<Product> products = productRepository.findByNameContainingIgnoreCase(keyword);
-        return applyFilters(products, minPrice, maxPrice, sort, color, status);
+        List<Product> filtered = applyFilters(products, minPrice, maxPrice, sort, color, status);
+        
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filtered.size());
+        List<Product> pageContent = (start <= end && start < filtered.size()) ? filtered.subList(start, end) : new java.util.ArrayList<>();
+        
+        return new org.springframework.data.domain.PageImpl<>(pageContent, pageable, filtered.size());
     }
 
     private List<Product> applyFilters(List<Product> products, Double minPrice, Double maxPrice, String sort, String color, String status) {
@@ -96,14 +118,21 @@ public class ProductService {
         return products;
     }
 
-    public List<Product> getProductsByCategoryFiltered(String slug, Double minPrice, Double maxPrice, String sort, String color, String status) {
+    public org.springframework.data.domain.Page<Product> getProductsByCategoryFiltered(String slug, Double minPrice, Double maxPrice, String sort, String color, String status, int page, int size) {
         List<Product> products;
         if (slug == null || slug.isEmpty() || slug.equalsIgnoreCase("all")) {
             products = productRepository.findAll();
         } else {
             products = productRepository.findByCategorySlug(slug);
         }
-        return applyFilters(new java.util.ArrayList<>(products), minPrice, maxPrice, sort, color, status);
+        List<Product> filtered = applyFilters(new java.util.ArrayList<>(products), minPrice, maxPrice, sort, color, status);
+        
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filtered.size());
+        List<Product> pageContent = (start <= end && start < filtered.size()) ? filtered.subList(start, end) : new java.util.ArrayList<>();
+        
+        return new org.springframework.data.domain.PageImpl<>(pageContent, pageable, filtered.size());
     }
 
     public Product getProductById(Long id) {

@@ -33,6 +33,23 @@ public class ReviewService {
         return new ArrayList<>();
     }
 
+    public org.springframework.data.domain.Page<Review> searchAndPaginate(String keyword, int page, int size) {
+        List<Review> all = reviewRepository.findAll();
+        String lowerKeyword = keyword != null ? keyword.toLowerCase() : "";
+        List<Review> filtered = all.stream()
+                .filter(r -> r.getId().toString().contains(lowerKeyword) || 
+                             (r.getProduct() != null && r.getProduct().getName() != null && r.getProduct().getName().toLowerCase().contains(lowerKeyword)) ||
+                             (r.getUser() != null && r.getUser().getUsername() != null && r.getUser().getUsername().toLowerCase().contains(lowerKeyword)))
+                .collect(java.util.stream.Collectors.toList());
+
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filtered.size());
+        List<Review> pageContent = (start <= end && start < filtered.size()) ? filtered.subList(start, end) : new java.util.ArrayList<>();
+
+        return new org.springframework.data.domain.PageImpl<>(pageContent, pageable, filtered.size());
+    }
+
     public List<Review> getAllReviews() {
         return reviewRepository.findAll();
     }

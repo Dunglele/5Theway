@@ -82,6 +82,23 @@ public class OrderService {
         return false;
     }
 
+    public org.springframework.data.domain.Page<Order> searchAndPaginate(String keyword, int page, int size) {
+        List<Order> all = orderRepository.findAll();
+        String lowerKeyword = keyword != null ? keyword.toLowerCase() : "";
+        List<Order> filtered = all.stream()
+                .filter(o -> o.getId().toString().contains(lowerKeyword) || 
+                             (o.getFullName() != null && o.getFullName().toLowerCase().contains(lowerKeyword)) ||
+                             (o.getPhoneNumber() != null && o.getPhoneNumber().contains(lowerKeyword)))
+                .collect(java.util.stream.Collectors.toList());
+
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filtered.size());
+        List<Order> pageContent = (start <= end && start < filtered.size()) ? filtered.subList(start, end) : new java.util.ArrayList<>();
+
+        return new org.springframework.data.domain.PageImpl<>(pageContent, pageable, filtered.size());
+    }
+
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }

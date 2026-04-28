@@ -37,6 +37,24 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public org.springframework.data.domain.Page<User> searchAndPaginate(String keyword, int page, int size) {
+        List<User> all = userRepository.findAll();
+        String lowerKeyword = keyword != null ? keyword.toLowerCase() : "";
+        List<User> filtered = all.stream()
+                .filter(u -> u.getId().toString().contains(lowerKeyword) || 
+                             (u.getUsername() != null && u.getUsername().toLowerCase().contains(lowerKeyword)) ||
+                             (u.getFullName() != null && u.getFullName().toLowerCase().contains(lowerKeyword)) ||
+                             (u.getEmail() != null && u.getEmail().toLowerCase().contains(lowerKeyword)))
+                .collect(java.util.stream.Collectors.toList());
+
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filtered.size());
+        List<User> pageContent = (start <= end && start < filtered.size()) ? filtered.subList(start, end) : new java.util.ArrayList<>();
+
+        return new org.springframework.data.domain.PageImpl<>(pageContent, pageable, filtered.size());
+    }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
