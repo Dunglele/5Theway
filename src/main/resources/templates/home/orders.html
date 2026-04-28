@@ -5,54 +5,162 @@
 <head>
     <title>Lịch sử đơn hàng - _5theway</title>
     <style>
-        .orders-page { padding: 120px 0 80px; }
-        .orders-title { font-family: 'Be Vietnam Pro', sans-serif; font-size: 3rem; letter-spacing: 2px; margin-bottom: 40px; }
-        .order-card { background: #f9f9f9; border-radius: 12px; padding: 25px; margin-bottom: 20px; border: 1px solid #eee; transition: all 0.3s; }
-        .order-card:hover { border-color: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .order-id { font-weight: 700; font-size: 1.1rem; }
-        .order-status { padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-completed { background: #d4edda; color: #155724; }
-        .status-other { background: #e2e3e5; color: #383d41; }
-        .order-body { display: flex; justify-content: space-between; }
-        .order-info p { margin-bottom: 5px; font-size: 0.9rem; color: #666; }
-        .order-amount { font-weight: 700; font-size: 1.2rem; color: #000; }
+        .orders-page { padding: 60px 0 100px; background: #fafafa; min-height: 100vh; }
+        .orders-header { margin-bottom: 50px; text-align: center; }
+        .orders-title { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 800; font-size: 2.5rem; letter-spacing: -1px; margin-bottom: 10px; }
+        .orders-subtitle { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 2px; }
+
+        .order-list { max-width: 900px; margin: 0 auto; }
+        .order-card { 
+            background: #fff; border-radius: 12px; padding: 30px; margin-bottom: 20px; 
+            border: 1px solid #eee; transition: all 0.3s; cursor: pointer;
+            position: relative; overflow: hidden; display: block; text-decoration: none !important; color: inherit;
+        }
+        .order-card:hover { border-color: #000; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        .order-card__header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .order-card__id { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 800; font-size: 1.1rem; color: #000; display: block; margin-bottom: 5px; }
+        .order-card__date { font-size: 0.8rem; color: #999; }
+        
+        .status-badge { padding: 6px 14px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .status-pending { background: #fff8e1; color: #b78103; }
+        .status-confirmed { background: #e3f2fd; color: #1976d2; }
+        .status-shipping { background: #f3e5f5; color: #7b1fa2; }
+        .status-completed { background: #e8f5e9; color: #2e7d32; }
+        .status-cancelled { background: #ffebee; color: #c62828; }
+
+        .order-card__body { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: flex-end; }
+        .order-card__info { font-size: 0.9rem; color: #555; line-height: 1.6; }
+        .order-card__price-label { font-size: 0.75rem; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+        .order-card__total { font-weight: 800; font-size: 1.3rem; color: #000; }
+
+        .modal-content { border-radius: 20px; border: none; overflow: hidden; }
+        .modal-header { background: #000; color: #fff; padding: 25px 30px; border: none; }
+        .modal-body { padding: 30px; }
+        
+        .detail-item { display: grid; grid-template-columns: 60px 1fr auto; gap: 15px; margin-bottom: 15px; align-items: center; }
+        .detail-img { width: 60px; height: 75px; object-fit: cover; border-radius: 4px; background: #f9f9f9; }
+        .detail-name { font-weight: 700; font-size: 0.85rem; line-height: 1.3; margin: 0; color: #000; }
+        .detail-meta { font-size: 0.7rem; color: #888; }
+        .detail-price { font-weight: 700; font-size: 0.9rem; color: #000; }
+
+        .detail-info-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
+        .detail-label { color: #999; }
+        .detail-value { font-weight: 600; color: #000; text-align: right; }
+        .section-label { font-size: 0.75rem; font-weight: 800; color: #000; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; display: block; border-left: 3px solid #000; padding-left: 10px; }
+
+        .btn-cancel-order { background: #fff; color: #dc3545; border: 1px solid #dc3545; width: 100%; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; margin-top: 20px; transition: all 0.2s; cursor: pointer; }
+        .btn-cancel-order:hover { background: #dc3545; color: #fff; }
+
+        .empty-orders { padding: 100px 0; text-align: center; }
     </style>
 </head>
 <body>
 <section layout:fragment="content">
     <main class="orders-page">
-        <div class="container-xl">
-            <h1 class="orders-title">LỊCH SỬ ĐƠN HÀNG</h1>
+        <div class="container-xl px-4 px-md-5">
 
-            <div th:if="${#lists.isEmpty(orders)}" class="text-center" style="padding: 100px 0;">
-                <h3 class="text-muted">Bạn chưa đặt đơn hàng nào.</h3>
-                <a href="/" class="btn btn-dark mt-4 px-5 py-3">BẮT ĐẦU MUA SẮM</a>
+            <!-- Flash Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert" style="border-radius: 10px; max-width: 900px; margin: 0 auto 30px;">
+                <span th:text="${success}">Thành công!</span>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert" style="border-radius: 10px; max-width: 900px; margin: 0 auto 30px;">
+                <span th:text="${error}">Lỗi!</span>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            
+            <div class="orders-header">
+                <p class="orders-subtitle">Order History</p>
+                <h1 class="orders-title">ĐƠN HÀNG CỦA BẠN</h1>
             </div>
 
-            <div th:each="order : ${orders}" class="order-card">
-                <div class="order-header">
-                    <span class="order-id" th:text="'ĐƠN HÀNG #' + ${order.id}">#1</span>
-                    <span class="order-status" 
-                          th:classappend="${order.status == 'PENDING' ? 'status-pending' : (order.status == 'COMPLETED' ? 'status-completed' : 'status-other')}"
-                          th:text="${order.status}">
-                        PENDING
-                    </span>
+            <div th:if="${orders == null or #lists.isEmpty(orders)}" class="empty-orders">
+                <div class="mb-5">
+                    <svg width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="#ddd" stroke-width="1.5">
+                        <path d="M16 11V7a4 4 0 0 0-8 0v4M5 9h12l1 12H4L5 9z"/>
+                    </svg>
                 </div>
-                <div class="order-body">
-                    <div class="order-info">
-                        <p><strong>Ngày đặt:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
-                        <p><strong>Người nhận:</strong> <span th:text="${order.fullName}"></span></p>
-                        <p><strong>Địa chỉ:</strong> <span th:text="${order.shippingAddress}"></span></p>
+                <h3 class="font-weight-bold mb-3">CHƯA CÓ ĐƠN HÀNG NÀO</h3>
+                <p class="text-muted mb-5">Bạn chưa thực hiện bất kỳ giao dịch nào.</p>
+                <a href="/" class="btn btn-dark px-5 py-3" style="border-radius: 4px; font-weight: 700;">QUAY LẠI CỬA HÀNG</a>
+            </div>
+
+            <div class="order-list" th:if="${orders != null and !#lists.isEmpty(orders)}">
+                <div th:each="order : ${orders}" class="order-card" 
+                     data-toggle="modal" th:data-target="'#orderModal' + ${order.id}">
+                    
+                    <div class="order-card__header">
+                        <div>
+                            <span class="order-card__id" th:text="'ĐƠN HÀNG #' + ${order.id}">#0</span>
+                            <span class="order-card__date" th:if="${order.createdAt != null}" th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">Date</span>
+                        </div>
+                        <span class="status-badge" 
+                              th:classappend="${order.status != null ? 'status-' + #strings.toLowerCase(order.status) : 'status-pending'}"
+                              th:text="${order.status != null ? order.status : 'PENDING'}">PENDING</span>
                     </div>
-                    <div class="text-right">
-                        <p class="text-muted small mb-1">Tổng thanh toán</p>
-                        <div class="order-amount" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</div>
+
+                    <div class="order-card__body">
+                        <div class="order-card__info">
+                            <p class="mb-1"><strong>Người nhận:</strong> <span th:text="${order.fullName != null ? order.fullName : 'N/A'}">Name</span></p>
+                            <p class="mb-0 text-truncate" style="max-width: 300px;"><strong>Địa chỉ:</strong> <span th:text="${order.shippingAddress != null ? order.shippingAddress : 'N/A'}">Address</span></p>
+                        </div>
+                        <div class="text-right">
+                            <span class="order-card__price-label">Tổng thanh toán</span>
+                            <div class="order-card__total" th:text="${#numbers.formatDecimal(order.totalAmount != null ? order.totalAmount : 0, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Modals -->
+        <th:block th:if="${orders != null}" th:each="order : ${orders}">
+            <div class="modal fade" th:id="'orderModal' + ${order.id}" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content shadow-lg">
+                        <div class="modal-header">
+                            <h5 class="modal-title font-weight-bold" th:text="'CHI TIẾT ĐƠN HÀNG #' + ${order.id}">CHI TIẾT</h5>
+                            <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <span class="section-label">SẢN PHẨM ĐÃ ĐẶT</span>
+                            <div class="summary-items-list mb-4" th:if="${order.items != null}">
+                                <div th:each="item : ${order.items}" class="detail-item">
+                                    <img th:if="${item.product != null}" th:src="${item.product.mainImageUrl}" class="detail-img">
+                                    <div class="item-info">
+                                        <p class="detail-name" th:text="${item.productName}">Name</p>
+                                        <p class="detail-meta">
+                                            Số lượng: <span th:text="${item.quantity}">1</span>
+                                        </p>
+                                    </div>
+                                    <span class="detail-price" th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                                </div>
+                            </div>
+
+                            <span class="section-label">THÔNG TIN GIAO NHẬN</span>
+                            <div class="detail-info-row"><span class="detail-label">Người nhận:</span><span class="detail-value" th:text="${order.fullName}">-</span></div>
+                            <div class="detail-info-row"><span class="detail-label">Số điện thoại:</span><span class="detail-value" th:text="${order.phoneNumber}">-</span></div>
+                            <div class="detail-info-row"><span class="detail-label">Thanh toán:</span><span class="detail-value" th:text="${order.paymentMethod}">-</span></div>
+
+                            <div style="height:1px; background:#eee; margin:20px 0;"></div>
+
+                            <div class="detail-info-row">
+                                <span class="font-weight-bold text-dark">TỔNG CỘNG:</span>
+                                <span class="order-card__total" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                            </div>
+
+                            <div th:if="${order.status == 'PENDING'}" class="mt-4">
+                                <form th:action="@{'/Home/Orders/Cancel/' + ${order.id}}" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')">
+                                    <button type="submit" class="btn-cancel-order">HỦY ĐƠN HÀNG NÀY</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+
     </main>
 </section>
 </body>

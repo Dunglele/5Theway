@@ -21,15 +21,23 @@ public class CheckoutController {
     private final CartService cartService;
     private final OrderService orderService;
     private final com.huit._theway.service.CouponService couponService;
+    private final com.huit._theway.repository.UserRepository userRepository;
 
     @GetMapping("")
-    public String showCheckout(HttpSession session, Model model) {
+    public String showCheckout(HttpSession session, Model model, Authentication authentication) {
         Map<Long, CartItem> cart = cartService.getCart(session);
         if (cart.isEmpty()) {
             return "redirect:/Home/Cart";
         }
         
         Double totalAmount = cartService.getTotalAmount(session);
+        
+        // Autocomplete cho user đã đăng nhập
+        if (authentication != null && authentication.isAuthenticated()) {
+            userRepository.findByUsername(authentication.getName()).ifPresent(user -> {
+                model.addAttribute("currentUser", user);
+            });
+        }
         
         model.addAttribute("order", new Order());
         model.addAttribute("cartItems", cart.values());

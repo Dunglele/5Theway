@@ -3,48 +3,61 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{admin/layout}">
 <head>
-    <title>Người dùng - Admin</title>
+    <title>Quản lý người dùng - Admin</title>
 </head>
 <body>
 <section layout:fragment="content">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 2.5rem;">QUẢN LÝ NGƯỜI DÙNG</h2>
+    <div class="mb-4">
+        <h2 style="font-weight: 800; letter-spacing: -1px;">QUẢN LÝ NGƯỜI DÙNG</h2>
+        <p class="text-muted small">Danh sách tài khoản khách hàng và quản trị viên trên hệ thống.</p>
     </div>
 
     <div class="card">
         <div class="card-body p-0">
-            <table class="table table-hover mb-0">
-                <thead class="thead-light">
-                    <tr>
-                        <th class="pl-4">ID</th>
-                        <th>Tên đăng nhập</th>
-                        <th>Họ tên</th>
-                        <th>Email</th>
-                        <th>Trạng thái</th>
-                        <th class="text-right pr-4">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="user : ${users}">
-                        <td class="pl-4" th:text="${user.id}">1</td>
-                        <td th:text="${user.username}" style="font-weight: 600;">username</td>
-                        <td th:text="${user.fullName}">fullName</td>
-                        <td th:text="${user.email}">email</td>
-                        <td>
-                            <span th:if="${user.enabled}" class="badge badge-success">Đang hoạt động</span>
-                            <span th:unless="${user.enabled}" class="badge badge-danger">Đã bị khóa</span>
-                        </td>
-                        <td class="text-right pr-4">
-                            <a th:href="@{'/admin/users/toggle/' + ${user.id}}" 
-                               class="btn btn-sm" 
-                               th:classappend="${user.enabled ? 'btn-outline-danger' : 'btn-outline-success'}"
-                               th:text="${user.enabled ? 'Khóa' : 'Mở khóa'}">
-                                Thao tác
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="pl-4">Người dùng</th>
+                            <th>Email</th>
+                            <th>Vai trò</th>
+                            <th>Trạng thái</th>
+                            <th class="text-right pr-4">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="user : ${users}">
+                            <td class="pl-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-dark text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width:35px; height:35px; font-weight:800; font-size: 0.8rem;" th:text="${#strings.substring(user.username, 0, 1)}">U</div>
+                                    <div>
+                                        <div style="font-weight: 700; color: #000;" th:text="${user.username}">Username</div>
+                                        <small class="text-muted" th:text="${user.fullName}">Full Name</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td th:text="${user.email}">email@example.com</td>
+                            <td>
+                                <th:block th:each="role : ${user.roles}">
+                                    <span class="badge badge-light p-2 mr-1" th:text="${role}">ROLE</span>
+                                </th:block>
+                            </td>
+                            <td>
+                                <span th:if="${user.enabled}" class="text-success small font-weight-bold">● Đang hoạt động</span>
+                                <span th:unless="${user.enabled}" class="text-danger small font-weight-bold">● Đã khóa</span>
+                            </td>
+                            <td class="text-right pr-4">
+                                <form th:action="@{/admin/users/toggle-status}" method="post">
+                                    <input type="hidden" name="userId" th:value="${user.id}">
+                                    <button type="submit" class="btn btn-sm font-weight-bold" 
+                                            th:classappend="${user.enabled ? 'btn-outline-danger' : 'btn-outline-success'}"
+                                            th:text="${user.enabled ? 'KHÓA' : 'MỞ KHÓA'}">Action</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </section>

@@ -29,10 +29,12 @@ public class CartController {
     @PostMapping("/Add")
     public String addToCart(@RequestParam("productId") Long productId,
                             @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
+                            @RequestParam(value = "color", required = false) String color,
+                            @RequestParam(value = "size", required = false) String size,
                             HttpSession session,
                             org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
-        log.info("POST /Home/Cart/Add received for productId: {}", productId);
-        cartService.addToCart(productId, quantity, session);
+        log.info("POST /Home/Cart/Add received for productId: {}, color: {}, size: {}", productId, color, size);
+        cartService.addToCart(productId, quantity, color, size, session);
         ra.addFlashAttribute("successMsg", "Đã thêm sản phẩm vào giỏ hàng!");
         return "redirect:/Home/Cart";
     }

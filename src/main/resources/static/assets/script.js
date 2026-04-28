@@ -179,6 +179,11 @@ if (document.querySelector('.heroSwiper') && typeof Swiper !== 'undefined') {
 document.addEventListener('click', e => {
     const btn = e.target.closest('.btn-add-cart');
     if (!btn) return;
+    
+    // Nếu là thẻ liên kết (<a>) thì để trình duyệt chuyển trang bình thường
+    if (btn.tagName.toLowerCase() === 'a') return;
+
+    // Nếu là nút bấm (button) thì mới xử lý AJAX add-to-cart
     e.preventDefault(); e.stopPropagation();
     const orig = btn.innerHTML;
     btn.innerHTML = `<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Đã thêm!`;

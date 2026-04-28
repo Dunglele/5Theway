@@ -7,54 +7,60 @@
 </head>
 <body>
 <section layout:fragment="content">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 2.5rem;">QUẢN LÝ ĐƠN HÀNG</h2>
+    <div class="mb-4">
+        <h2 style="font-weight: 800; letter-spacing: -1px;">QUẢN LÝ ĐƠN HÀNG</h2>
+        <p class="text-muted small">Cập nhật trạng thái và theo dõi lịch sử mua hàng của khách.</p>
     </div>
 
     <div class="card">
         <div class="card-body p-0">
-            <table class="table table-hover mb-0">
-                <thead class="thead-light">
-                    <tr>
-                        <th class="pl-4">ID</th>
-                        <th>Khách hàng</th>
-                        <th>Tổng tiền</th>
-                        <th>Ngày đặt</th>
-                        <th>Trạng thái</th>
-                        <th class="text-right pr-4">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="order : ${orders}">
-                        <td class="pl-4" th:text="'#' + ${order.id}">#1</td>
-                        <td>
-                            <div style="font-weight: 600;" th:text="${order.fullName}">Name</div>
-                            <small class="text-muted" th:text="${order.phoneNumber}"></small>
-                        </td>
-                        <td th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</td>
-                        <td th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">Date</td>
-                        <td>
-                            <span class="badge" 
-                                  th:classappend="${order.status == 'PENDING' ? 'badge-warning' : (order.status == 'COMPLETED' ? 'badge-success' : 'badge-info')}"
-                                  th:text="${order.status}">
-                                STATUS
-                            </span>
-                        </td>
-                        <td class="text-right pr-4">
-                            <form th:action="@{/admin/orders/update-status}" method="post" class="d-inline-block">
-                                <input type="hidden" name="orderId" th:value="${order.id}">
-                                <select name="status" class="form-control form-control-sm d-inline-block w-auto" onchange="this.form.submit()">
-                                    <option value="PENDING" th:selected="${order.status == 'PENDING'}">Chờ duyệt</option>
-                                    <option value="CONFIRMED" th:selected="${order.status == 'CONFIRMED'}">Đã xác nhận</option>
-                                    <option value="SHIPPING" th:selected="${order.status == 'SHIPPING'}">Đang giao</option>
-                                    <option value="COMPLETED" th:selected="${order.status == 'COMPLETED'}">Hoàn thành</option>
-                                    <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">Hủy đơn</option>
-                                </select>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="pl-4">Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Tổng tiền</th>
+                            <th>Ngày đặt</th>
+                            <th>Trạng thái</th>
+                            <th class="text-right pr-4">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${orders}">
+                            <td class="pl-4">
+                                <span style="font-weight: 800; color: #000;" th:text="'#' + ${order.id}">#1</span>
+                            </td>
+                            <td>
+                                <div style="font-weight: 700; color: #000;" th:text="${order.fullName}">Name</div>
+                                <div class="small text-muted" th:text="${order.phoneNumber}">0123</div>
+                            </td>
+                            <td style="font-weight: 600;" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</td>
+                            <td class="small" th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">Date</td>
+                            <td>
+                                <span class="badge badge-admin" 
+                                      th:classappend="${order.status == 'PENDING' ? 'badge-warning' : (order.status == 'COMPLETED' ? 'badge-success' : (order.status == 'CANCELLED' ? 'badge-danger' : 'badge-info'))}"
+                                      th:text="${order.status}">STATUS</span>
+                            </td>
+                            <td class="text-right pr-4">
+                                <form th:action="@{/admin/orders/update-status}" method="post" class="d-inline-block">
+                                    <input type="hidden" name="orderId" th:value="${order.id}">
+                                    <select name="status" class="form-control form-control-sm d-inline-block w-auto border-dark" 
+                                            style="font-weight: 700; font-size: 0.75rem;"
+                                            onchange="this.form.submit()"
+                                            th:disabled="${order.status == 'CANCELLED' or order.status == 'COMPLETED'}">
+                                        <option value="PENDING" th:selected="${order.status == 'PENDING'}">CHỜ DUYỆT</option>
+                                        <option value="CONFIRMED" th:selected="${order.status == 'CONFIRMED'}">XÁC NHẬN</option>
+                                        <option value="SHIPPING" th:selected="${order.status == 'SHIPPING'}">ĐANG GIAO</option>
+                                        <option value="COMPLETED" th:selected="${order.status == 'COMPLETED'}">HOÀN THÀNH</option>
+                                        <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">HỦY ĐƠN</option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </section>

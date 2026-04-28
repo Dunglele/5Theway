@@ -2,6 +2,7 @@ package com.huit._theway.controller;
 
 import com.huit._theway.model.Category;
 import com.huit._theway.model.Product;
+import com.huit._theway.model.Order;
 import com.huit._theway.service.CategoryService;
 import com.huit._theway.service.OrderService;
 import com.huit._theway.service.ProductService;
@@ -20,6 +21,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/admin")
@@ -34,13 +37,35 @@ public class AdminController {
 
     @GetMapping("")
     public String dashboard(Model model) {
-        model.addAttribute("totalProducts", productService.searchProducts("").size());
-        model.addAttribute("totalOrders", orderService.getAllOrders().size());
-        double revenue = orderService.getAllOrders().stream()
-                .filter(o -> "COMPLETED".equals(o.getStatus()))
-                .mapToDouble(com.huit._theway.model.Order::getTotalAmount)
-                .sum();
-        model.addAttribute("totalRevenue", revenue);
+        try {
+            List<Order> allOrders = orderService.getAllOrders();
+            if (allOrders == null) allOrders = new ArrayList<>();
+
+            long pCount = 0;
+            try { pCount = productService.searchProducts("").size(); } catch (Exception e) {}
+            
+            long uCount = 0;
+            try { uCount = userService.getAllUsers().size(); } catch (Exception e) {}
+
+            double revenue = 0.0;
+            for (Order o : allOrders) {
+                if (o != null && "COMPLETED".equals(o.getStatus()) && o.getTotalAmount() != null) {
+                    revenue += o.getTotalAmount();
+                }
+            }
+
+            model.addAttribute("productCount", pCount);
+            model.addAttribute("orderCount", (long) allOrders.size());
+            model.addAttribute("userCount", uCount);
+            model.addAttribute("totalRevenue", revenue);
+            model.addAttribute("orders", allOrders);
+        } catch (Exception e) {
+            model.addAttribute("productCount", 0L);
+            model.addAttribute("orderCount", 0L);
+            model.addAttribute("userCount", 0L);
+            model.addAttribute("totalRevenue", 0.0);
+            model.addAttribute("orders", new ArrayList<Order>());
+        }
         return "admin/dashboard";
     }
 
@@ -97,27 +122,19 @@ public class AdminController {
                               @RequestParam("imageFile") MultipartFile imageFile,
                               org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
         try {
-            // Xử lý Upload Ảnh
             if (!imageFile.isEmpty()) {
                 String fileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
                 Path uploadPath = Paths.get("uploads");
-                
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
+                if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
 
                 try (InputStream inputStream = imageFile.getInputStream()) {
                     Path filePath = uploadPath.resolve(fileName);
                     Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-                    // Lưu đường dẫn URL để hiển thị (ví dụ: /uploads/abc.jpg)
                     product.setMainImageUrl("/uploads/" + fileName);
                 }
             } else if (product.getId() != null) {
-                // Nếu là update và không chọn ảnh mới, giữ nguyên ảnh cũ
                 Product existing = productService.getProductById(product.getId());
-                if (existing != null) {
-                    product.setMainImageUrl(existing.getMainImageUrl());
-                }
+                if (existing != null) product.setMainImageUrl(existing.getMainImageUrl());
             }
 
             Category cat = categoryService.getAllCategories().stream()

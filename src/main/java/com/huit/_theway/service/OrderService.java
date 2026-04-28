@@ -58,6 +58,30 @@ public class OrderService {
         return savedOrder;
     }
 
+    @Transactional
+    public boolean cancelOrder(Long orderId, String username) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        // Chỉ cho phép hủy nếu đơn hàng thuộc về user đó và trạng thái là PENDING
+        if (order != null && order.getUser().getUsername().equals(username) && "PENDING".equals(order.getStatus())) {
+            order.setStatus("CANCELLED");
+            
+            // Hoàn lại tồn kho
+            if (order.getItems() != null) {
+                for (OrderItem item : order.getItems()) {
+                    Product product = item.getProduct();
+                    if (product != null) {
+                        product.setStock(product.getStock() + item.getQuantity());
+                        productRepository.save(product);
+                    }
+                }
+            }
+            
+            orderRepository.save(order);
+            return true;
+        }
+        return false;
+    }
+
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
@@ -70,6 +94,24 @@ public class OrderService {
     public void updateOrderStatus(Long orderId, String status) {
         Order order = orderRepository.findById(orderId).orElse(null);
         if (order != null) {
+            // Nếu đã Hủy hoặc Hoàn thành thì không cho phép đổi nữa
+            if ("CANCELLED".equals(order.getStatus()) || "COMPLETED".equals(order.getStatus())) {
+                return;
+            }
+
+            // Nếu trạng thái mới là CANCELLED -> Hoàn lại tồn kho
+            if ("CANCELLED".equals(status)) {
+                if (order.getItems() != null) {
+                    for (OrderItem item : order.getItems()) {
+                        Product product = item.getProduct();
+                        if (product != null) {
+                            product.setStock(product.getStock() + item.getQuantity());
+                            productRepository.save(product);
+                        }
+                    }
+                }
+            }
+
             order.setStatus(status);
             orderRepository.save(order);
         }
@@ -78,7 +120,7 @@ public class OrderService {
     public List<Order> getOrdersByUser(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user != null) {
-            return orderRepository.findByUserOrderByCreatedAtDesc(user);
+            return orderRepository.findByUserWithItems(user);
         }
         return new ArrayList<>();
     }

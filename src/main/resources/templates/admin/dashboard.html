@@ -4,36 +4,132 @@
       layout:decorate="~{admin/layout}">
 <head>
     <title>Dashboard - Admin</title>
+    <style>
+        .stats-card {
+            padding: 30px;
+            border-radius: 12px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        .stats-card:hover { transform: translateY(-5px); }
+        .stats-card h3 { font-size: 2.2rem; font-weight: 800; margin-bottom: 5px; }
+        .stats-card p { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin: 0; }
+        .stats-icon { position: absolute; right: 20px; bottom: 10px; opacity: 0.15; }
+        
+        .bg-gradient-1 { background: linear-gradient(135deg, #000 0%, #333 100%); }
+        .bg-gradient-2 { background: linear-gradient(135deg, #222 0%, #555 100%); }
+        .bg-gradient-3 { background: linear-gradient(135deg, #111 0%, #444 100%); }
+        .bg-gradient-4 { background: linear-gradient(135deg, #333 0%, #666 100%); }
+        .extra-small { font-size: 0.75rem; }
+    </style>
 </head>
 <body>
 <section layout:fragment="content">
-    <h2 class="mb-4" style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 2.5rem;">DASHBOARD</h2>
-    
+    <div class="mb-5">
+        <h2 style="font-weight: 800; letter-spacing: -1px;">TỔNG QUAN HỆ THỐNG</h2>
+        <p class="text-muted">Chào mừng bạn quay lại, quản trị viên 5THEWAY.</p>
+    </div>
+
     <div class="row">
-        <div class="col-md-4">
-            <div class="card p-4 bg-white">
-                <h5 class="text-muted" style="font-size: 0.9rem;">TỔNG SẢN PHẨM</h5>
-                <h3 th:text="${totalProducts}" style="font-weight: 700;">0</h3>
+        <!-- Stats Products -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="stats-card bg-gradient-1">
+                <h3 th:text="${productCount}">0</h3>
+                <p>Sản phẩm</p>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card p-4 bg-white">
-                <h5 class="text-muted" style="font-size: 0.9rem;">ĐƠN HÀNG MỚI</h5>
-                <h3 style="font-weight: 700;">0</h3>
+        <!-- Stats Orders -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="stats-card bg-gradient-2">
+                <h3 th:text="${orderCount}">0</h3>
+                <p>Đơn hàng</p>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card p-4 bg-white">
-                <h5 class="text-muted" style="font-size: 0.9rem;">DOANH THU (VNĐ)</h5>
-                <h3 style="font-weight: 700;">0</h3>
+        <!-- Stats Revenue -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="stats-card bg-gradient-3">
+                <h3 th:text="${#numbers.formatDecimal(totalRevenue, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</h3>
+                <p>Doanh thu</p>
+            </div>
+        </div>
+        <!-- Stats Users -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="stats-card bg-gradient-4">
+                <h3 th:text="${userCount}">0</h3>
+                <p>Người dùng</p>
             </div>
         </div>
     </div>
 
-    <div class="mt-5">
-        <div class="card p-4">
-            <h5>Chào mừng quay lại, Admin!</h5>
-            <p class="text-muted">Hệ thống đang hoạt động ổn định. Bạn có thể bắt đầu quản lý danh mục và sản phẩm từ Sidebar bên trái.</p>
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>ĐƠN HÀNG MỚI NHẤT</span>
+                    <a th:href="@{/admin/orders}" class="btn btn-sm btn-link text-dark font-weight-bold">XEM TẤT CẢ</a>
+                </div>
+                <div class="card-body p-0">
+                    <div th:if="${orders == null or #lists.isEmpty(orders)}" class="p-4 text-center text-muted small">
+                        Chưa có đơn hàng nào trong hệ thống.
+                    </div>
+                    <div class="table-responsive" th:if="${orders != null and !#lists.isEmpty(orders)}">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Khách hàng</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <th:block th:each="order, iter : ${orders}">
+                                    <tr th:if="${iter.index < 5}">
+                                        <td th:text="'#' + ${order.id}">#1</td>
+                                        <td th:text="${order.fullName}">Name</td>
+                                        <td th:text="${#numbers.formatDecimal(order.totalAmount != null ? order.totalAmount : 0, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</td>
+                                        <td>
+                                            <span class="badge badge-admin" 
+                                                  th:classappend="${order.status == 'PENDING' ? 'badge-warning' : (order.status == 'COMPLETED' ? 'badge-success' : 'badge-dark')}"
+                                                  th:text="${order.status}">Status</span>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">TRẠNG THÁI HỆ THỐNG</div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-success rounded-circle mr-3" style="width:12px; height:12px;"></div>
+                        <div>
+                            <span class="font-weight-bold d-block small">Cơ sở dữ liệu</span>
+                            <span class="text-muted extra-small">Kết nối ổn định</span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-success rounded-circle mr-3" style="width:12px; height:12px;"></div>
+                        <div>
+                            <span class="font-weight-bold d-block small">Bộ nhớ lưu trữ</span>
+                            <span class="text-muted extra-small">Còn trống 85%</span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success rounded-circle mr-3" style="width:12px; height:12px;"></div>
+                        <div>
+                            <span class="font-weight-bold d-block small">Bảo mật</span>
+                            <span class="text-muted extra-small">Spring Security Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>

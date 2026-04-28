@@ -3,39 +3,30 @@ package com.huit._theway.controller;
 import com.huit._theway.dto.UserRegistrationDto;
 import com.huit._theway.model.User;
 import com.huit._theway.service.UserService;
+import com.huit._theway.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * Controller xử lý các chức năng đăng ký, thông tin người dùng
- * Mỗi thay đổi đều phải được chú thích bằng tiếng Việt
+ * Controller xử lý các chức năng người dùng và đơn hàng cá nhân
  */
 @Controller
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    // Hiển thị trang đăng ký đã được định nghĩa trong HomeController, 
-    // nhưng ta có thể chuyển logic sang đây để tập trung quản lý User.
-    // Tạm thời ta sẽ xử lý PostMapping đăng ký tại đây.
+    private final OrderService orderService;
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") UserRegistrationDto registrationDto, 
                                RedirectAttributes redirectAttributes) {
-        
-        // Kiểm tra mật khẩu khớp nhau
         if (!registrationDto.getPassword().equals(registrationDto.getConfirmPassword())) {
             redirectAttributes.addFlashAttribute("error", "Mật khẩu xác nhận không khớp!");
             return "redirect:/register";
         }
-
         try {
             User user = User.builder()
                     .username(registrationDto.getUsername())
@@ -43,7 +34,6 @@ public class UserController {
                     .email(registrationDto.getEmail())
                     .fullName(registrationDto.getFullName())
                     .build();
-            
             userService.registerUser(user);
             redirectAttributes.addFlashAttribute("success", "Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
             return "redirect:/login";
@@ -74,12 +64,10 @@ public class UserController {
                                  @RequestParam("confirmPassword") String confirmPassword,
                                  org.springframework.security.core.Authentication auth,
                                  RedirectAttributes redirectAttributes) {
-        
         if (!newPassword.equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("error", "Mật khẩu mới xác nhận không khớp!");
             return "redirect:/Home/Profile";
         }
-
         boolean success = userService.changePassword(auth.getName(), oldPassword, newPassword);
         if (success) {
             redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công!");
@@ -87,5 +75,18 @@ public class UserController {
             redirectAttributes.addFlashAttribute("error", "Mật khẩu cũ không chính xác!");
         }
         return "redirect:/Home/Profile";
+    }
+
+    @PostMapping("/Home/Orders/Cancel/{id}")
+    public String cancelOrder(@PathVariable("id") Long id,
+                              org.springframework.security.core.Authentication auth,
+                              RedirectAttributes redirectAttributes) {
+        boolean success = orderService.cancelOrder(id, auth.getName());
+        if (success) {
+            redirectAttributes.addFlashAttribute("success", "Đã hủy đơn hàng thành công và hoàn lại tồn kho.");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Không thể hủy đơn hàng này. Chỉ đơn hàng đang chờ xác nhận mới có thể hủy.");
+        }
+        return "redirect:/Home/Orders";
     }
 }

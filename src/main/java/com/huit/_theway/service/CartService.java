@@ -32,18 +32,21 @@ public class CartService {
         return cart;
     }
 
-    public void addToCart(Long productId, Integer quantity, HttpSession session) {
-        log.info("Adding product {} with quantity {} to cart. Session: {}", productId, quantity, session.getId());
+    public void addToCart(Long productId, Integer quantity, String color, String size, HttpSession session) {
+        log.info("Adding product {} (color: {}, size: {}) with quantity {} to cart.", productId, color, size, quantity);
         Map<Long, CartItem> cart = getCart(session);
         Product product = productService.getProductById(productId);
         
         if (product != null) {
             Double activePrice = (product.getSalePrice() != null) ? product.getSalePrice() : product.getPrice();
             
+            // Để đơn giản, ta vẫn dùng productId làm key. 
+            // Nếu muốn hỗ trợ cùng SP nhưng khác màu/size là item riêng, cần đổi key thành "id_color_size"
             if (cart.containsKey(productId)) {
                 CartItem item = cart.get(productId);
                 item.setQuantity(item.getQuantity() + quantity);
-                log.info("Updated quantity for product {}: new qty {}", productId, item.getQuantity());
+                item.setColor(color);
+                item.setSize(size);
             } else {
                 CartItem item = CartItem.builder()
                         .productId(productId)
@@ -51,13 +54,12 @@ public class CartService {
                         .imageUrl(product.getMainImageUrl())
                         .price(activePrice)
                         .quantity(quantity)
+                        .color(color)
+                        .size(size)
                         .build();
                 cart.put(productId, item);
-                log.info("Added new product {} to cart", productId);
             }
             session.setAttribute(CART_SESSION_KEY, cart);
-        } else {
-            log.error("Product {} not found, cannot add to cart", productId);
         }
     }
 

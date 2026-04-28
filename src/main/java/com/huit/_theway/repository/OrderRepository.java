@@ -7,7 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> findByUserOrderByCreatedAtDesc(User user);
+    @Query("SELECT o FROM Order o WHERE o.user = :user ORDER BY o.createdAt DESC")
+    List<Order> findByUserWithItems(@Param("user") User user);
 }

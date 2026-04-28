@@ -21,6 +21,8 @@ public class CartItem implements Serializable {
     private String imageUrl;
     private Double price;
     private Integer quantity;
+    private String color;
+    private String size;
 
     public Double getTotalPrice() {
         return price * quantity;

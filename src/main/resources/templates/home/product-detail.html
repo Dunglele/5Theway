@@ -283,8 +283,9 @@
                     </div>
                     
                     <div class="col-md-5">
-                        <div class="p-4 border rounded" sec:authorize="isAuthenticated()">
-                            <h5 class="mb-3 small font-weight-bold text-uppercase">Gửi đánh giá</h5>
+                        <!-- Hiển thị Form nếu có quyền đánh giá -->
+                        <div class="p-4 border rounded" th:if="${canReview}">
+                            <h5 class="mb-3 small font-weight-bold text-uppercase">Gửi đánh giá của bạn</h5>
                             <form th:action="@{/Home/Product/Review}" method="post">
                                 <input type="hidden" name="productId" th:value="${product.id}">
                                 <div class="form-group mb-3">
@@ -301,6 +302,17 @@
                                 </div>
                                 <button type="submit" class="btn btn-dark btn-sm w-100 font-weight-bold">GỬI ĐÁNH GIÁ</button>
                             </form>
+                        </div>
+                        
+                        <!-- Hiển thị thông báo nếu không có quyền -->
+                        <div class="p-4 border rounded bg-light" th:unless="${canReview}">
+                            <h5 class="mb-3 small font-weight-bold text-uppercase">ĐÁNH GIÁ SẢN PHẨM</h5>
+                            <p class="small text-muted mb-0" sec:authorize="isAuthenticated()">
+                                Bạn chỉ có thể để lại đánh giá cho sản phẩm này sau khi đã **mua hàng** và đơn hàng được chuyển sang trạng thái **Hoàn thành**.
+                            </p>
+                            <p class="small text-muted mb-0" sec:authorize="!isAuthenticated()">
+                                Vui lòng <a href="/login" class="text-dark font-weight-bold">Đăng nhập</a> để tham gia đánh giá sản phẩm.
+                            </p>
                         </div>
                     </div>
                 </div>

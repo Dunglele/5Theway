@@ -5,108 +5,239 @@
 <head>
     <title>Giỏ hàng - _5theway</title>
     <style>
-        .cart-page { padding: 120px 0 80px; background: #fff; }
-        .cart-title { font-family: 'Be Vietnam Pro', sans-serif; font-size: 3rem; letter-spacing: 2px; margin-bottom: 40px; }
-        .cart-table thead { background: #f9f9f9; }
-        .cart-table th { border: none; padding: 20px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #888; }
-        .cart-table td { padding: 25px 20px; vertical-align: middle; border-bottom: 1px solid #eee; }
-        .cart-item-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-right: 20px; }
-        .cart-item-name { font-weight: 600; color: #000; text-decoration: none; font-size: 1.1rem; }
-        .cart-item-price { font-weight: 500; color: #666; }
+        .cart-page { padding: 80px 0 120px; background: #fff; min-height: 80vh; }
+        .cart-header { margin-bottom: 60px; text-align: center; }
+        .cart-title { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 800; font-size: 2.5rem; letter-spacing: -1px; margin-bottom: 10px; }
+        .cart-subtitle { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* Cart Items */
+        .cart-items-list { margin-bottom: 40px; }
+        .cart-item { 
+            display: grid; 
+            grid-template-columns: 100px 1fr auto; 
+            gap: 25px; 
+            padding: 30px 0; 
+            border-bottom: 1px solid #f0f0f0; 
+            align-items: center;
+        }
+        .cart-item:first-child { border-top: 1px solid #f0f0f0; }
         
-        .qty-control { display: flex; align-items: center; border: 1px solid #ddd; width: fit-content; border-radius: 5px; overflow: hidden; }
-        .qty-btn { width: 35px; height: 35px; background: #fff; border: none; cursor: pointer; transition: all 0.2s; }
-        .qty-btn:hover { background: #f0f0f0; }
-        .qty-input { width: 45px; height: 35px; border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; text-align: center; font-weight: 600; }
+        .cart-item-img-wrap { 
+            width: 100px; 
+            height: 120px; 
+            border-radius: 4px; 
+            overflow: hidden; 
+            background: #f9f9f9; 
+        }
+        .cart-item-img { width: 100%; height: 100%; object-fit: cover; }
         
-        .cart-summary { background: #f9f9f9; padding: 40px; border-radius: 15px; position: sticky; top: 120px; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 1.1rem; }
-        .summary-total { border-top: 2px solid #000; padding-top: 20px; margin-top: 20px; font-weight: 700; font-size: 1.5rem; color: #000; }
+        .cart-item-info { display: flex; flex-direction: column; gap: 5px; }
+        .cart-item-cat { font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+        .cart-item-name { font-weight: 700; color: #000; text-decoration: none; font-size: 1.1rem; line-height: 1.2; }
+        .cart-item-name:hover { text-decoration: underline; }
+        .cart-item-meta { font-size: 0.85rem; color: #666; margin-top: 5px; }
         
-        .btn-checkout { background: #000; color: #fff; width: 100%; padding: 18px; border-radius: 10px; font-weight: 700; letter-spacing: 1px; border: none; transition: all 0.3s; margin-top: 30px; }
-        .btn-checkout:hover { background: #333; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .cart-item-price-wrap { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
+        .cart-item-total { font-weight: 800; font-size: 1.1rem; color: #000; }
         
-        .empty-cart-msg { padding: 100px 0; text-align: center; }
+        /* Qty Control */
+        .qty-control { 
+            display: flex; 
+            align-items: center; 
+            border: 1px solid #000; 
+            border-radius: 2px; 
+            height: 36px;
+            width: fit-content;
+        }
+        .qty-btn { width: 32px; height: 100%; background: transparent; border: none; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+        .qty-input { width: 40px; border: none; text-align: center; font-weight: 700; font-size: 0.9rem; background: transparent; }
+        
+        .btn-remove { 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            color: #999; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            background: none; 
+            border: none; 
+            padding: 0;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .btn-remove:hover { color: #dc3545; }
+
+        /* Summary Card */
+        .cart-summary { 
+            background: #fff; 
+            padding: 40px; 
+            border: 1px solid #000; 
+            border-radius: 4px; 
+            position: sticky; 
+            top: 120px; 
+        }
+        .summary-title { font-weight: 800; font-size: 1.2rem; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.95rem; color: #444; }
+        .summary-row.total { 
+            border-top: 1px solid #eee; 
+            padding-top: 20px; 
+            margin-top: 20px; 
+            font-weight: 800; 
+            font-size: 1.4rem; 
+            color: #000; 
+        }
+        
+        .btn-checkout { 
+            background: #000 !important; 
+            color: #fff !important; 
+            width: 100%; 
+            padding: 18px; 
+            border-radius: 2px; 
+            font-weight: 700; 
+            font-size: 0.9rem;
+            letter-spacing: 1.5px; 
+            border: none; 
+            transition: all 0.3s; 
+            margin-top: 30px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-checkout:hover { background: #333 !important; }
+        
+        /* Free Ship Progress */
+        .freeship-notice { background: #f9f9f9; padding: 15px; border-radius: 4px; margin-bottom: 30px; }
+        .freeship-text { font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; }
+        .progress-bar-bg { width: 100%; height: 4px; background: #eee; border-radius: 2px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: #000; transition: width 0.5s ease; }
+
+        .empty-cart-msg { padding: 120px 0; text-align: center; }
+
+        @media (max-width: 991px) {
+            .cart-summary { margin-top: 60px; position: static; }
+        }
+        
+        @media (max-width: 575px) {
+            .cart-title { font-size: 2rem; }
+            .cart-item { grid-template-columns: 80px 1fr; gap: 15px; }
+            .cart-item-img-wrap { width: 80px; height: 100px; }
+            .cart-item-price-wrap { grid-column: span 2; flex-direction: row; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px dashed #eee; }
+        }
     </style>
 </head>
 <body>
 <section layout:fragment="content">
     <main class="cart-page">
-        <div class="container-xl">
-            <h1 class="cart-title">GIỎ HÀNG CỦA BẠN</h1>
-
-            <div th:if="${#lists.isEmpty(cartItems)}" class="empty-cart-msg">
-                <h3 class="text-muted mb-4">Giỏ hàng của bạn đang trống.</h3>
-                <a href="/" class="btn btn-dark px-5 py-3" style="border-radius: 8px; font-weight: 600;">TIẾP TỤC MUA SẮM</a>
+        <div class="container-xl px-4 px-md-5">
+            
+            <!-- Header -->
+            <div class="cart-header">
+                <p class="cart-subtitle">Shopping Cart</p>
+                <h1 class="cart-title">GIỎ HÀNG CỦA BẠN</h1>
             </div>
 
-            <div class="row" th:unless="${#lists.isEmpty(cartItems)}">
-                <!-- Cart Items List -->
-                <div class="col-lg-8">
-                    <table class="table cart-table">
-                        <thead>
-                            <tr>
-                                <th>Sản phẩm</th>
-                                <th>Giá</th>
-                                <th>Số lượng</th>
-                                <th class="text-right">Tổng cộng</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="item : ${cartItems}">
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img th:src="${item.imageUrl}" th:alt="${item.name}" class="cart-item-img">
-                                        <a th:href="@{'/Home/Product/' + ${item.productId}}" class="cart-item-name" th:text="${item.name}">Tên sản phẩm</a>
-                                    </div>
-                                </td>
-                                <td class="cart-item-price" th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</td>
-                                <td>
+            <!-- Empty State -->
+            <div th:if="${cartItems == null or #lists.isEmpty(cartItems)}" class="empty-cart-msg">
+                <div class="mb-5">
+                    <svg width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="#ddd" stroke-width="1.5">
+                        <path d="M16 11V7a4 4 0 0 0-8 0v4M5 9h12l1 12H4L5 9z"/>
+                    </svg>
+                </div>
+                <h3 class="text-dark font-weight-bold mb-3">GIỎ HÀNG ĐANG TRỐNG</h3>
+                <p class="text-muted mb-5">Có vẻ như bạn chưa chọn được món đồ nào ưng ý.</p>
+                <a href="/" class="btn btn-dark px-5 py-3" style="border-radius: 2px; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px;">QUAY LẠI CỬA HÀNG</a>
+            </div>
+
+            <!-- Cart Content -->
+            <div class="row" th:if="${cartItems != null and !#lists.isEmpty(cartItems)}">
+                
+                <!-- Items List -->
+                <div class="col-lg-7 col-xl-8">
+                    <div class="cart-items-list">
+                        <div th:each="item : ${cartItems}" class="cart-item">
+                            <!-- Image -->
+                            <div class="cart-item-img-wrap">
+                                <img th:src="${item.imageUrl}" th:alt="${item.name}" class="cart-item-img">
+                            </div>
+                            
+                            <!-- Info -->
+                            <div class="cart-item-info">
+                                <span class="cart-item-cat">5THEWAY®</span>
+                                <a th:href="@{'/Home/Product/' + ${item.productId}}" class="cart-item-name" th:text="${item.name}">Product Name</a>
+                                <div class="cart-item-meta">
+                                    <span th:text="${item.color != null ? item.color : 'Màu mặc định'}">Color</span>
+                                    <span class="mx-2">/</span>
+                                    <span th:text="${item.size != null ? item.size : 'Size mặc định'}">Size</span>
+                                </div>
+                                <div class="mt-3">
                                     <form th:action="@{/Home/Cart/Update}" method="post" class="qty-control">
                                         <input type="hidden" name="productId" th:value="${item.productId}">
-                                        <button type="submit" name="quantity" th:value="${item.quantity - 1}" class="qty-btn">-</button>
+                                        <button type="submit" name="quantity" th:value="${item.quantity - 1}" class="qty-btn">−</button>
                                         <input type="text" th:value="${item.quantity}" class="qty-input" readonly>
                                         <button type="submit" name="quantity" th:value="${item.quantity + 1}" class="qty-btn">+</button>
                                     </form>
-                                </td>
-                                <td class="text-right font-weight-bold" th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</td>
-                                <td class="text-right">
-                                    <a th:href="@{'/Home/Cart/Remove/' + ${item.productId}}" class="text-danger" style="text-decoration:none;">&times;</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    
-                    <div class="mt-4">
-                        <a href="/" class="text-dark font-weight-bold" style="text-decoration: underline;">← Tiếp tục mua sắm</a>
+                                </div>
+                            </div>
+                            
+                            <!-- Pricing & Remove -->
+                            <div class="cart-item-price-wrap">
+                                <div class="cart-item-total" th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</div>
+                                <a th:href="@{'/Home/Cart/Remove/' + ${item.productId}}" class="btn-remove">Xoá khỏi giỏ</a>
+                            </div>
+                        </div>
                     </div>
+                    
+                    <a href="/" class="text-dark small font-weight-bold" style="text-decoration: none; letter-spacing: 1px;">
+                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right: 5px; margin-top: -2px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        TIẾP TỤC MUA SẮM
+                    </a>
                 </div>
 
                 <!-- Summary -->
-                <div class="col-lg-4">
+                <div class="col-lg-5 col-xl-4">
                     <div class="cart-summary">
-                        <h4 class="mb-4" style="font-weight: 700;">TỔNG ĐƠN HÀNG</h4>
+                        <h2 class="summary-title">Tóm tắt đơn hàng</h2>
+                        
+                        <!-- Free Ship Progress -->
+                        <div class="freeship-notice">
+                            <div class="freeship-text" th:if="${totalAmount < 500000}">
+                                Bạn còn thiếu <span class="text-dark" th:text="${#numbers.formatDecimal(500000 - totalAmount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span> để được FREE SHIP.
+                            </div>
+                            <div class="freeship-text text-success" th:if="${totalAmount >= 500000}">
+                                Chúc mừng! Đơn hàng của bạn đã được FREE SHIP.
+                            </div>
+                            <div class="progress-bar-bg mt-2">
+                                <div class="progress-bar-fill" th:style="'width: ' + ${totalAmount >= 500000 ? 100 : (totalAmount * 100 / 500000)} + '%'"></div>
+                            </div>
+                        </div>
+
                         <div class="summary-row">
                             <span>Tạm tính</span>
                             <span th:text="${#numbers.formatDecimal(totalAmount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
                         </div>
                         <div class="summary-row">
                             <span>Phí vận chuyển</span>
-                            <span th:text="${totalAmount >= 500000 ? 'Miễn phí' : '30.000đ'}">0đ</span>
+                            <span th:text="${totalAmount >= 500000 ? 'MIỄN PHÍ' : '30.000đ'}">0đ</span>
                         </div>
-                        <div class="summary-total">
-                            <span>Tổng cộng</span>
+                        
+                        <div class="summary-row total">
+                            <span>TỔNG CỘNG</span>
                             <span th:text="${#numbers.formatDecimal(totalAmount >= 500000 ? totalAmount : totalAmount + 30000, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
                         </div>
                         
-                        <a th:href="@{/Home/Checkout}" class="btn btn-checkout d-flex align-items-center justify-content-center" style="text-decoration: none;">TIẾN HÀNH THANH TOÁN</a>
+                        <a th:href="@{/Home/Checkout}" class="btn-checkout">TIẾN HÀNH THANH TOÁN</a>
                         
-                        <p class="text-muted mt-4" style="font-size: 0.85rem; text-align: center;">
-                            Miễn phí vận chuyển cho đơn hàng trên 500.000đ.
-                        </p>
+                        <!-- <div class="mt-4 pt-4 border-top">
+                            <p class="small text-muted mb-2">CHÚNG TÔI CHẤP NHẬN:</p>
+                            <div class="d-flex gap-2" style="gap: 10px;">
+                                <img src="https://checkout.kiotvietweb.vn/assets/images/payment/cod.png" height="20" alt="COD">
+                                <img src="https://checkout.kiotvietweb.vn/assets/images/payment/momo.png" height="20" alt="Momo">
+                                <img src="https://checkout.kiotvietweb.vn/assets/images/payment/vnpay.png" height="20" alt="VNPay">
+                            </div>
+                        </div> -->
                     </div>
                 </div>
+
             </div>
         </div>
     </main>

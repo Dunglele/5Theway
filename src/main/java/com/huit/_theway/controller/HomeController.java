@@ -105,7 +105,7 @@ public class HomeController {
     }
 
     @GetMapping("/Home/Product/{id}")
-    public String ProductDetail(@PathVariable("id") Long id, Model model) {
+    public String ProductDetail(@PathVariable("id") Long id, Model model, org.springframework.security.core.Authentication auth) {
         Product product = productService.getProductById(id);
         if (product == null) {
             return "redirect:/";
@@ -113,6 +113,14 @@ public class HomeController {
         model.addAttribute("product", product);
         model.addAttribute("relatedProducts", productService.getProductsByCategory(product.getCategory().getSlug()));
         model.addAttribute("reviews", reviewService.getReviewsByProduct(id));
+        
+        // Kiểm tra quyền đánh giá
+        boolean canReview = false;
+        if (auth != null && auth.isAuthenticated()) {
+            canReview = reviewService.canUserReview(auth.getName(), id);
+        }
+        model.addAttribute("canReview", canReview);
+        
         return "home/product-detail";
     }
 
