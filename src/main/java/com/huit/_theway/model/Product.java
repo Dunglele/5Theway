@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Min;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +26,7 @@ public class Product {
     private Long id;
 
     @Column(nullable = false)
+    @NotBlank(message = "Tên sản phẩm không được để trống")
     private String name;
 
     @Column(columnDefinition = "TEXT")
@@ -32,11 +35,13 @@ public class Product {
     private String shortDescription; // Mô tả ngắn cho trang chi tiết
 
     @Column(nullable = false)
+    @Min(value = 0, message = "Giá sản phẩm không được nhỏ hơn 0")
     private Double price;
 
     private Double salePrice; // Giá khuyến mãi
 
     @Column(nullable = false)
+    @Min(value = 0, message = "Số lượng tồn kho không được nhỏ hơn 0")
     private Integer stock; // Số lượng tồn kho
 
     private String color; // Màu sắc sản phẩm

@@ -161,10 +161,15 @@ public class AdminController {
     }
 
     @PostMapping("/products/save")
-    public String saveProduct(@ModelAttribute("product") Product product, 
+    public String saveProduct(@jakarta.validation.Valid @ModelAttribute("product") Product product, 
+                              org.springframework.validation.BindingResult result,
                               @RequestParam("category.id") Long categoryId,
                               @RequestParam("imageFile") MultipartFile imageFile,
                               org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+        if (result.hasErrors()) {
+            ra.addFlashAttribute("errorMsg", result.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/admin/products/add";
+        }
         try {
             if (!imageFile.isEmpty()) {
                 String fileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();

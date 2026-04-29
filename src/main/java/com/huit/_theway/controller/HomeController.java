@@ -54,48 +54,25 @@ public class HomeController {
         model.addAttribute("status", status);
     }
 
-    @GetMapping("/Home/Tops")
-    public String Tops(@RequestParam(required = false) Double minPrice,
-                       @RequestParam(required = false) Double maxPrice,
-                       @RequestParam(required = false) String sort,
-                       @RequestParam(required = false) String color,
-                       @RequestParam(required = false) String status, 
-                       @RequestParam(defaultValue = "0") int page, Model model){
-        addFilterAttributes(model, "tops", minPrice, maxPrice, sort, color, status, page);
-        return "home/tops";
-    }
-
-    @GetMapping("/Home/Hoodies")
-    public String Hoodies(@RequestParam(required = false) Double minPrice,
-                          @RequestParam(required = false) Double maxPrice,
-                          @RequestParam(required = false) String sort,
-                          @RequestParam(required = false) String color,
-                          @RequestParam(required = false) String status, 
-                          @RequestParam(defaultValue = "0") int page, Model model){
-        addFilterAttributes(model, "hoodies", minPrice, maxPrice, sort, color, status, page);
-        return "home/hoodies";
-    }
-
-    @GetMapping("/Home/Jackets")
-    public String Jackets(@RequestParam(required = false) Double minPrice,
-                          @RequestParam(required = false) Double maxPrice,
-                          @RequestParam(required = false) String sort,
-                          @RequestParam(required = false) String color,
-                          @RequestParam(required = false) String status, 
-                          @RequestParam(defaultValue = "0") int page, Model model){
-        addFilterAttributes(model, "jackets", minPrice, maxPrice, sort, color, status, page);
-        return "home/jackets";
-    }
-
-    @GetMapping("/Home/Accessories")
-    public String Accessories(@RequestParam(required = false) Double minPrice,
-                              @RequestParam(required = false) Double maxPrice,
-                              @RequestParam(required = false) String sort,
-                              @RequestParam(required = false) String color,
-                              @RequestParam(required = false) String status, 
-                              @RequestParam(defaultValue = "0") int page, Model model){
-        addFilterAttributes(model, "accessories", minPrice, maxPrice, sort, color, status, page);
-        return "home/accessories";
+    @GetMapping({"/Home/Tops", "/Home/Hoodies", "/Home/Jackets", "/Home/Accessories"})
+    public String CategoryPage(jakarta.servlet.http.HttpServletRequest request,
+                               @RequestParam(required = false) Double minPrice,
+                               @RequestParam(required = false) Double maxPrice,
+                               @RequestParam(required = false) String sort,
+                               @RequestParam(required = false) String color,
+                               @RequestParam(required = false) String status, 
+                               @RequestParam(defaultValue = "0") int page, Model model){
+        String uri = request.getRequestURI();
+        String slug = uri.substring(uri.lastIndexOf("/") + 1).toLowerCase();
+        
+        addFilterAttributes(model, slug, minPrice, maxPrice, sort, color, status, page);
+        model.addAttribute("currentCategory", slug);
+        
+        // Cập nhật tiêu đề trang dựa theo danh mục
+        String pageTitle = slug.substring(0, 1).toUpperCase() + slug.substring(1);
+        model.addAttribute("pageTitle", pageTitle + " - _5theway");
+        
+        return "home/category";
     }
 
     @GetMapping("/Home/Outlet")

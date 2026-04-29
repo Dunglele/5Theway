@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.validation.BindingResult;
+import jakarta.validation.Valid;
 
 /**
  * Controller xử lý các chức năng người dùng và đơn hàng cá nhân
@@ -21,8 +23,13 @@ public class UserController {
     private final OrderService orderService;
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") UserRegistrationDto registrationDto, 
+    public String registerUser(@Valid @ModelAttribute("user") UserRegistrationDto registrationDto, 
+                               BindingResult result,
                                RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", result.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/register";
+        }
         if (!registrationDto.getPassword().equals(registrationDto.getConfirmPassword())) {
             redirectAttributes.addFlashAttribute("error", "Mật khẩu xác nhận không khớp!");
             return "redirect:/register";

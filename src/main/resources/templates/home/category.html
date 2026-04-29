@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Accessories - _5theway</title>
+    <title th:text="${pageTitle}">Category - _5theway</title>
     <style>
         .color-swatches { display: flex; flex-wrap: wrap; gap: 8px; padding: 5px 0; }
         .color-swatch { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; cursor: pointer; transition: transform 0.2s; }
@@ -30,7 +30,7 @@
                     <span class="result-count" th:text="${totalItems} + ' sản phẩm'">0 sản phẩm</span>
                 </div>
                 <div class="cat-toolbar__right">
-                    <form id="sortForm" method="get" th:action="@{/Home/Accessories}">
+                    <form id="sortForm" method="get" th:action="@{'/Home/' + ${currentCategory}}">
                         <input type="hidden" name="minPrice" th:value="${minPrice}">
                         <input type="hidden" name="maxPrice" th:value="${maxPrice}">
                         <input type="hidden" name="color" th:value="${color}">
@@ -65,7 +65,7 @@
             <div class="cat-layout">
                 <!-- SIDEBAR -->
                 <aside class="filter-sidebar" id="filterSidebar">
-                    <form id="mainFilterForm" method="get" th:action="@{/Home/Accessories}">
+                    <form id="mainFilterForm" method="get" th:action="@{'/Home/' + ${currentCategory}}">
                         <div class="filter-sidebar__header">
                             <h2 class="filter-sidebar__title">Bộ lọc</h2>
                             <button type="button" class="filter-close" id="filterClose">
@@ -87,10 +87,10 @@
                                 </button>
                                 <div class="filter-group__body">
                                     <ul class="filter-cat-list">
-                                        <li><a th:href="@{/Home/Tops}">TOPS</a></li>
-                                        <li><a th:href="@{/Home/Hoodies}">HOODIES</a></li>
-                                        <li><a th:href="@{/Home/Jackets}">JACKETS</a></li>
-                                        <li><a th:href="@{/Home/Accessories}" class="active">ACCESSORIES</a></li>
+                                        <li><a th:href="@{/Home/Tops}" th:classappend="${currentCategory == 'tops' ? 'active' : ''}">TOPS</a></li>
+                                        <li><a th:href="@{/Home/Hoodies}" th:classappend="${currentCategory == 'hoodies' ? 'active' : ''}">HOODIES</a></li>
+                                        <li><a th:href="@{/Home/Jackets}" th:classappend="${currentCategory == 'jackets' ? 'active' : ''}">JACKETS</a></li>
+                                        <li><a th:href="@{/Home/Accessories}" th:classappend="${currentCategory == 'accessories' ? 'active' : ''}">ACCESSORIES</a></li>
                                         <li><a th:href="@{/Home/Outlet}">Tất cả OUTLET</a></li>
                                     </ul>
                                 </div>
@@ -162,7 +162,7 @@
                         </div>
 
                         <div class="filter-sidebar__footer">
-                            <a th:href="@{/Home/Accessories}" class="btn-reset-mobile">Thiết lập lại</a>
+                            <a th:href="@{'/Home/' + ${currentCategory}}" class="btn-reset-mobile">Thiết lập lại</a>
                             <button type="submit" class="btn-apply-mobile">Áp dụng</button>
                         </div>
                     </form>
@@ -172,7 +172,7 @@
                 <section style="flex:1;">
                     <div th:if="${#lists.isEmpty(products)}" class="py-5 text-center">
                         <p class="text-muted">Không tìm thấy sản phẩm nào phù hợp với bộ lọc hiện tại.</p>
-                        <a th:href="@{/Home/Accessories}" class="btn btn-outline-dark btn-sm mt-2">Xóa tất cả bộ lọc</a>
+                        <a th:href="@{'/Home/' + ${currentCategory}}" class="btn btn-outline-dark btn-sm mt-2">Xóa tất cả bộ lọc</a>
                     </div>
                     <div class="products-grid grid-4">
                         <th:block th:each="product : ${products}">
@@ -260,3 +260,4 @@
 </th:block>
 </body>
 </html>
+
