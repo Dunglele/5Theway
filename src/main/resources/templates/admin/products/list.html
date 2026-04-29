@@ -18,6 +18,10 @@
         <h2 style="font-weight: 800; letter-spacing: -1px;">QUẢN LÝ SẢN PHẨM</h2>
         <div class="d-flex align-items-center">
             <form method="get" class="form-inline m-0">
+                <select name="categoryId" class="form-control mr-2" onchange="this.form.submit()">
+                    <option value="">Tất cả danh mục</option>
+                    <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}" th:selected="${categoryId == cat.id}"></option>
+                </select>
                 <input type="text" name="keyword" th:value="${keyword}" class="form-control mr-2" placeholder="Tìm kiếm mã hoặc tên...">
                 <button class="btn btn-outline-dark" type="submit">Tìm</button>
             </form>
@@ -76,13 +80,13 @@
             <nav th:if="${totalPages > 1}" class="mt-4 mb-3">
                 <ul class="pagination justify-content-center">
                     <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{''(keyword=${keyword}, page=${currentPage - 1})}">Trang trước</a>
+                        <a class="page-link" th:href="@{''(keyword=${keyword}, categoryId=${categoryId}, page=${currentPage - 1})}">Trang trước</a>
                     </li>
                     <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${currentPage == i ? 'active' : ''}">
-                        <a class="page-link" th:href="@{''(keyword=${keyword}, page=${i})}" th:text="${i}">1</a>
+                        <a class="page-link" th:href="@{''(keyword=${keyword}, categoryId=${categoryId}, page=${i})}" th:text="${i}">1</a>
                     </li>
                     <li class="page-item" th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{''(keyword=${keyword}, page=${currentPage + 1})}">Trang sau</a>
+                        <a class="page-link" th:href="@{''(keyword=${keyword}, categoryId=${categoryId}, page=${currentPage + 1})}">Trang sau</a>
                     </li>
                 </ul>
             </nav>

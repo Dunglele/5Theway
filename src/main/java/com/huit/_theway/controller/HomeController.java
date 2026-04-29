@@ -2,11 +2,13 @@ package com.huit._theway.controller;
 
 import com.huit._theway.model.Product;
 import com.huit._theway.model.User;
+import com.huit._theway.model.SiteSetting;
 import com.huit._theway.repository.UserRepository;
 import com.huit._theway.service.CategoryService;
 import com.huit._theway.service.OrderService;
 import com.huit._theway.service.ProductService;
 import com.huit._theway.service.ReviewService;
+import com.huit._theway.service.SiteSettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,12 +26,17 @@ public class HomeController {
     private final ReviewService reviewService;
     private final OrderService orderService;
     private final UserRepository userRepository;
+    private final SiteSettingService siteSettingService;
 
     @GetMapping("/")
     public String Index(Model model){
+        SiteSetting settings = siteSettingService.getSettings();
+        model.addAttribute("settings", settings);
         model.addAttribute("categories", categoryService.getAllCategories());
-        model.addAttribute("topProducts", productService.getProductsByCategory("tops"));
-        model.addAttribute("allAccessoryProducts", productService.getProductsByCategory("accessories"));
+        
+        model.addAttribute("category1Products", productService.getProductsByCategory(settings.getCategory1Slug()));
+        model.addAttribute("category2Products", productService.getProductsByCategory(settings.getCategory2Slug()));
+        
         return "home/index";
     }
 

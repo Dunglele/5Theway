@@ -4,11 +4,13 @@ import com.huit._theway.model.Category;
 import com.huit._theway.model.Product;
 import com.huit._theway.model.Order;
 import com.huit._theway.model.Review;
+import com.huit._theway.model.SiteSetting;
 import com.huit._theway.model.User;
 import com.huit._theway.service.CategoryService;
 import com.huit._theway.service.OrderService;
 import com.huit._theway.service.ProductService;
 import com.huit._theway.service.ReviewService;
+import com.huit._theway.service.SiteSettingService;
 import com.huit._theway.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -36,6 +38,7 @@ public class AdminController {
     private final UserService userService;
     private final OrderService orderService;
     private final ReviewService reviewService;
+    private final SiteSettingService siteSettingService;
 
     @GetMapping("")
     public String dashboard(Model model) {
@@ -113,13 +116,16 @@ public class AdminController {
     // --- QUẢN LÝ SẢN PHẨM ---
     @GetMapping("/products")
     public String listProducts(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+                               @RequestParam(value = "categoryId", required = false) Long categoryId,
                                @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                                Model model) {
-        org.springframework.data.domain.Page<Product> productPage = productService.searchAndPaginateAdmin(keyword, page - 1, 10);
+        org.springframework.data.domain.Page<Product> productPage = productService.searchAndPaginateAdmin(keyword, categoryId, page - 1, 10);
         model.addAttribute("products", productPage.getContent());
+        model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("keyword", keyword);
+        model.addAttribute("categoryId", categoryId);
         return "admin/products/list";
     }
 
@@ -236,5 +242,64 @@ public class AdminController {
     public String deleteReview(@PathVariable("id") Long id) {
         reviewService.deleteReview(id);
         return "redirect:/admin/reviews";
+    }
+
+    // --- CÀI ĐẶT TRANG CHỦ ---
+    @GetMapping("/settings/home")
+    public String showHomeSettings(Model model) {
+        model.addAttribute("settings", siteSettingService.getSettings());
+        model.addAttribute("categories", categoryService.getAllCategories());
+        return "admin/settings/home";
+    }
+
+    @PostMapping("/settings/home/save")
+    public String saveHomeSettings(@ModelAttribute("settings") SiteSetting settings,
+                                   @RequestParam("image1File") MultipartFile image1File,
+                                   @RequestParam("image2File") MultipartFile image2File,
+                                   org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+        try {
+            SiteSetting existing = siteSettingService.getSettings();
+            
+            // Handle image 1 upload
+            if (!image1File.isEmpty()) {
+                String fileName1 = UUID.randomUUID().toString() + "_" + image1File.getOriginalFilename();
+                Path uploadPath = Paths.get("uploads");
+                if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
+                try (InputStream inputStream = image1File.getInputStream()) {
+                    Files.copy(inputStream, uploadPath.resolve(fileName1), StandardCopyOption.REPLACE_EXISTING);
+                    settings.setSlide1Image("/uploads/" + fileName1);
+                }
+            } else {
+                settings.setSlide1Image(existing.getSlide1Image());
+            }
+
+            // Handle image 2 upload
+            if (!image2File.isEmpty()) {
+                String fileName2 = UUID.randomUUID().toString() + "_" + image2File.getOriginalFilename();
+                Path uploadPath = Paths.get("uploads");
+                if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
+                try (InputStream inputStream = image2File.getInputStream()) {
+                    Files.copy(inputStream, uploadPath.resolve(fileName2), StandardCopyOption.REPLACE_EXISTING);
+                    settings.setSlide2Image("/uploads/" + fileName2);
+                }
+            } else {
+                settings.setSlide2Image(existing.getSlide2Image());
+            }
+            
+            // Set category titles implicitly
+            Category cat1 = categoryService.getCategoryBySlug(settings.getCategory1Slug());
+            if (cat1 != null) settings.setCategory1Title(cat1.getName().toUpperCase());
+            
+            Category cat2 = categoryService.getCategoryBySlug(settings.getCategory2Slug());
+            if (cat2 != null) settings.setCategory2Title(cat2.getName().toUpperCase());
+
+            siteSettingService.saveSettings(settings);
+            ra.addFlashAttribute("successMsg", "Cập nhật cài đặt trang chủ thành công!");
+        } catch (IOException e) {
+            ra.addFlashAttribute("errorMsg", "Lỗi tải ảnh: " + e.getMessage());
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMsg", "Lỗi hệ thống: " + e.getMessage());
+        }
+        return "redirect:/admin/settings/home";
     }
 }

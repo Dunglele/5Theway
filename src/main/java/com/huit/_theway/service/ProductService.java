@@ -29,11 +29,12 @@ public class ProductService {
         return productRepository.findByCategorySlug(slug);
     }
 
-    public org.springframework.data.domain.Page<Product> searchAndPaginateAdmin(String keyword, int page, int size) {
+    public org.springframework.data.domain.Page<Product> searchAndPaginateAdmin(String keyword, Long categoryId, int page, int size) {
         List<Product> all = productRepository.findAll();
         String lowerKeyword = keyword != null ? keyword.toLowerCase() : "";
         List<Product> filtered = all.stream()
                 .filter(p -> p.getId().toString().contains(lowerKeyword) || (p.getName() != null && p.getName().toLowerCase().contains(lowerKeyword)))
+                .filter(p -> categoryId == null || (p.getCategory() != null && p.getCategory().getId().equals(categoryId)))
                 .collect(java.util.stream.Collectors.toList());
 
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
