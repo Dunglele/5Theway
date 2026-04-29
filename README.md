@@ -91,5 +91,7 @@ Dưới đây là một số User Story chính được phân tích và thiết 
     ```
     *   Hệ thống sẽ chạy tại `http://localhost:8080`.
 
+<img width="1813" height="961" alt="image" src="https://github.com/user-attachments/assets/676a7b50-edb8-4246-b1e2-eab817e6bf71" />
+
 ---
 *Dự án được xây dựng với mục đích học thuật và mô phỏng thực tế. Cảm ơn bạn đã quan tâm.*
