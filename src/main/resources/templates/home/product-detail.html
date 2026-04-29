@@ -20,6 +20,26 @@
             border-radius: 4px; 
             background: #f9f9f9;
         }
+        
+        /* Gallery Thumbs */
+        .product-gallery-thumbs {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .gallery-thumb {
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .gallery-thumb:hover { border-color: #ccc; }
+        .gallery-thumb.active { border-color: #000; }
 
         /* Info Section */
         .product-info-wrap { padding-left: 10px; }
@@ -121,8 +141,16 @@
             <div class="row">
                 <!-- Left: Product Images -->
                 <div class="col-md-6 mb-4 mb-md-0">
-                    <div class="pd-image-wrap">
+                    <div class="pd-image-wrap" style="flex-direction: column; align-items: center;">
                         <img th:src="${product.mainImageUrl}" th:alt="${product.name}" class="product-main-img" id="mainProductImage" />
+                        
+                        <!-- Thumbnail Gallery -->
+                        <div class="product-gallery-thumbs w-100" th:if="${product.additionalImages != null and !product.additionalImages.trim().empty}">
+                            <img th:src="${product.mainImageUrl}" class="gallery-thumb active" onclick="changeMainImage(this)" />
+                            <th:block th:each="imgUrl : ${#strings.arraySplit(product.additionalImages, ',')}">
+                                <img th:src="${#strings.trim(imgUrl)}" th:if="${!#strings.trim(imgUrl).empty}" class="gallery-thumb" onclick="changeMainImage(this)" />
+                            </th:block>
+                        </div>
                     </div>
                 </div>
                 
@@ -332,6 +360,12 @@
             let maxStock = [[${product.stock}]];
             if (val > maxStock) val = maxStock;
             qtyInput.value = val;
+        }
+
+        function changeMainImage(element) {
+            document.querySelectorAll('.gallery-thumb').forEach(thumb => thumb.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('mainProductImage').src = element.src;
         }
 
         function selectSize(element) {

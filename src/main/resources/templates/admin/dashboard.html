@@ -63,6 +63,45 @@
         </div>
     </div>
 
+    <!-- Detailed Order Stats -->
+    <div class="mb-3 mt-2">
+        <h6 style="font-weight: 800; color: #555; text-transform: uppercase; letter-spacing: 1px;">CHI TIẾT TRẠNG THÁI ĐƠN HÀNG</h6>
+    </div>
+    <div class="row mb-4">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #ffc107 !important;">
+                <div class="card-body py-3">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1" style="font-size: 0.75rem;">Chờ xử lý</div>
+                    <div class="h4 mb-0 font-weight-bold text-dark" th:text="${pendingCount}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #17a2b8 !important;">
+                <div class="card-body py-3">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1" style="font-size: 0.75rem;">Đang giao</div>
+                    <div class="h4 mb-0 font-weight-bold text-dark" th:text="${shippingCount}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #28a745 !important;">
+                <div class="card-body py-3">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1" style="font-size: 0.75rem;">Đã hoàn thành</div>
+                    <div class="h4 mb-0 font-weight-bold text-dark" th:text="${completedCount}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #dc3545 !important;">
+                <div class="card-body py-3">
+                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1" style="font-size: 0.75rem;">Đã hủy</div>
+                    <div class="h4 mb-0 font-weight-bold text-dark" th:text="${cancelledCount}">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row mt-4">
         <div class="col-lg-8">
             <div class="card">

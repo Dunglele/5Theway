@@ -50,7 +50,8 @@
                             <td class="text-right pr-4">
                                 <a th:href="@{'/admin/reviews/delete/' + ${review.id}}" 
                                    class="btn btn-sm btn-outline-danger font-weight-bold"
-                                   onclick="return confirm('Xác nhận xóa đánh giá này?')">XÓA</a>
+                                   onclick="return confirm('Xác nhận xóa đánh giá này?')"
+                                   sec:authorize="hasAuthority('ROLE_ADMIN')">XÓA</a>
                             </td>
                         </tr>
                     </tbody>

@@ -158,7 +158,7 @@
                         <div class="profile-header">
                             <div class="profile-avatar-wrap" th:text="${#strings.substring(user.fullName != null and !user.fullName.empty ? user.fullName : user.username, 0, 1)}">A</div>
                             <h1 class="profile-name" th:text="${user.fullName != null and !user.fullName.empty ? user.fullName : user.username}">Full Name</h1>
-                            <p class="profile-role" th:text="${#strings.contains(user.roles, 'ROLE_ADMIN') ? 'Quản trị viên' : 'Khách hàng thân thiết'}">ROLE</p>
+                            <p class="profile-role" th:text="${#strings.contains(user.roles, 'ROLE_ADMIN') ? 'Quản trị viên' : (#strings.contains(user.roles, 'ROLE_STAFF') ? 'Nhân viên' : 'Khách hàng thân thiết')}">ROLE</p>
                         </div>
 
                         <!-- Body -->

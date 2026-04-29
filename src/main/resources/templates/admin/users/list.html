@@ -12,10 +12,13 @@
             <h2 style="font-weight: 800; letter-spacing: -1px;">QUẢN LÝ NGƯỜI DÙNG</h2>
             <p class="text-muted small m-0">Danh sách tài khoản khách hàng và quản trị viên trên hệ thống.</p>
         </div>
-        <form method="get" class="form-inline m-0">
-            <input type="text" name="keyword" th:value="${keyword}" class="form-control mr-2" placeholder="Tìm kiếm mã hoặc tên...">
-            <button class="btn btn-outline-dark" type="submit">Tìm</button>
-        </form>
+        <div class="d-flex">
+            <form method="get" class="form-inline m-0 mr-2">
+                <input type="text" name="keyword" th:value="${keyword}" class="form-control mr-2" placeholder="Tìm kiếm mã hoặc tên...">
+                <button class="btn btn-outline-dark" type="submit">Tìm</button>
+            </form>
+            <a th:href="@{/admin/users/add}" class="btn btn-admin btn-admin-primary">Thêm mới</a>
+        </div>
     </div>
 
     <div class="card">

@@ -12,6 +12,7 @@ import com.huit._theway.service.ProductService;
 import com.huit._theway.service.ReviewService;
 import com.huit._theway.service.SiteSettingService;
 import com.huit._theway.service.UserService;
+import com.huit._theway.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,6 +40,7 @@ public class AdminController {
     private final OrderService orderService;
     private final ReviewService reviewService;
     private final SiteSettingService siteSettingService;
+    private final AuditLogService auditLogService;
 
     @GetMapping("")
     public String dashboard(Model model) {
@@ -52,15 +54,30 @@ public class AdminController {
             long uCount = 0;
             try { uCount = userService.getAllUsers().size(); } catch (Exception e) {}
 
+            long pendingCount = 0;
+            long shippingCount = 0;
+            long completedCount = 0;
+            long cancelledCount = 0;
             double revenue = 0.0;
+            
             for (Order o : allOrders) {
-                if (o != null && "COMPLETED".equals(o.getStatus()) && o.getTotalAmount() != null) {
-                    revenue += o.getTotalAmount();
+                if (o != null) {
+                    if ("PENDING".equals(o.getStatus())) pendingCount++;
+                    else if ("SHIPPING".equals(o.getStatus())) shippingCount++;
+                    else if ("COMPLETED".equals(o.getStatus())) {
+                        completedCount++;
+                        if (o.getTotalAmount() != null) revenue += o.getTotalAmount();
+                    }
+                    else if ("CANCELLED".equals(o.getStatus())) cancelledCount++;
                 }
             }
 
             model.addAttribute("productCount", pCount);
             model.addAttribute("orderCount", (long) allOrders.size());
+            model.addAttribute("pendingCount", pendingCount);
+            model.addAttribute("shippingCount", shippingCount);
+            model.addAttribute("completedCount", completedCount);
+            model.addAttribute("cancelledCount", cancelledCount);
             model.addAttribute("userCount", uCount);
             model.addAttribute("totalRevenue", revenue);
             model.addAttribute("orders", allOrders);
@@ -95,7 +112,9 @@ public class AdminController {
 
     @PostMapping("/categories/save")
     public String saveCategory(@ModelAttribute("category") Category category) {
+        boolean isNew = (category.getId() == null);
         categoryService.saveCategory(category);
+        auditLogService.logAction(isNew ? "CREATE" : "UPDATE", "Category", String.valueOf(category.getId()), "Tên danh mục: " + category.getName());
         return "redirect:/admin/categories";
     }
 
@@ -109,7 +128,11 @@ public class AdminController {
 
     @GetMapping("/categories/delete/{id}")
     public String deleteCategory(@PathVariable("id") Long id) {
-        categoryService.deleteCategory(id);
+        Category cat = categoryService.getCategoryById(id);
+        if (cat != null) {
+            categoryService.deleteCategory(id);
+            auditLogService.logAction("DELETE", "Category", String.valueOf(id), "Tên danh mục: " + cat.getName());
+        }
         return "redirect:/admin/categories";
     }
 
@@ -161,7 +184,9 @@ public class AdminController {
                     .filter(c -> c.getId().equals(categoryId))
                     .findFirst().orElse(null);
             product.setCategory(cat);
+            boolean isNew = (product.getId() == null);
             productService.saveProduct(product);
+            auditLogService.logAction(isNew ? "CREATE" : "UPDATE", "Product", String.valueOf(product.getId()), "Tên sản phẩm: " + product.getName());
             ra.addFlashAttribute("successMsg", "Lưu sản phẩm thành công!");
         } catch (IOException e) {
             ra.addFlashAttribute("errorMsg", "Lỗi tải ảnh: " + e.getMessage());
@@ -182,7 +207,11 @@ public class AdminController {
 
     @GetMapping("/products/delete/{id}")
     public String deleteProduct(@PathVariable("id") Long id) {
-        productService.deleteProduct(id);
+        Product p = productService.getProductById(id);
+        if (p != null) {
+            productService.deleteProduct(id);
+            auditLogService.logAction("DELETE", "Product", String.valueOf(id), "Tên sản phẩm: " + p.getName());
+        }
         return "redirect:/admin/products";
     }
 
@@ -199,9 +228,37 @@ public class AdminController {
         return "admin/users/list";
     }
 
-    @GetMapping("/users/toggle/{id}")
-    public String toggleUserStatus(@PathVariable("id") Long id) {
-        userService.toggleUserStatus(id);
+    @GetMapping("/users/add")
+    public String showAddUser(Model model) {
+        model.addAttribute("user", new User());
+        return "admin/users/add";
+    }
+
+    @PostMapping("/users/save")
+    public String saveUser(@ModelAttribute("user") User user, 
+                           @RequestParam("role") String role,
+                           org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+        if (userService.existsByUsername(user.getUsername())) {
+            ra.addFlashAttribute("errorMsg", "Tên đăng nhập đã tồn tại!");
+            return "redirect:/admin/users/add";
+        }
+        if (userService.existsByEmail(user.getEmail())) {
+            ra.addFlashAttribute("errorMsg", "Email đã tồn tại!");
+            return "redirect:/admin/users/add";
+        }
+        
+        user.setRoles(java.util.Collections.singleton(role));
+        user.setEnabled(true);
+        User savedUser = userService.registerUser(user);
+        auditLogService.logAction("CREATE", "User", String.valueOf(savedUser.getId()), "Tạo tài khoản: " + savedUser.getUsername() + " (" + role + ")");
+        ra.addFlashAttribute("successMsg", "Thêm người dùng thành công!");
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/toggle-status")
+    public String toggleUserStatus(@RequestParam("userId") Long userId) {
+        userService.toggleUserStatus(userId);
+        auditLogService.logAction("TOGGLE_STATUS", "User", String.valueOf(userId), "Thay đổi trạng thái tài khoản");
         return "redirect:/admin/users";
     }
 
@@ -222,6 +279,7 @@ public class AdminController {
     public String updateOrderStatus(@RequestParam("orderId") Long orderId, 
                                     @RequestParam("status") String status) {
         orderService.updateOrderStatus(orderId, status);
+        auditLogService.logAction("UPDATE_STATUS", "Order", String.valueOf(orderId), "Cập nhật trạng thái thành: " + status);
         return "redirect:/admin/orders";
     }
 
@@ -241,7 +299,26 @@ public class AdminController {
     @GetMapping("/reviews/delete/{id}")
     public String deleteReview(@PathVariable("id") Long id) {
         reviewService.deleteReview(id);
+        auditLogService.logAction("DELETE", "Review", String.valueOf(id), "Xóa đánh giá");
         return "redirect:/admin/reviews";
+    }
+
+    // --- NHẬT KÝ HOẠT ĐỘNG ---
+    @GetMapping("/audit-logs")
+    public String listAuditLogs(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+                                @RequestParam(value = "date", required = false, defaultValue = "") String date,
+                                @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                                Model model) {
+        if (date == null || date.isEmpty()) {
+            date = java.time.LocalDate.now().toString();
+        }
+        org.springframework.data.domain.Page<com.huit._theway.model.AuditLog> logPage = auditLogService.searchAndPaginate(keyword, date, page - 1, 20);
+        model.addAttribute("logs", logPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", logPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("date", date);
+        return "admin/audit-logs/list";
     }
 
     // --- CÀI ĐẶT TRANG CHỦ ---

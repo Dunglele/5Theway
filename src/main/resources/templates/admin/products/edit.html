@@ -99,8 +99,12 @@
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             object-fit: contain;
-            opacity: 0.3;
+            opacity: 0.5;
             z-index: 1;
+            transition: opacity 0.3s;
+        }
+        .custom-file-upload:hover .img-preview {
+            opacity: 0.2;
         }
 
         .switch-custom {
@@ -182,13 +186,14 @@
                         <div class="col-md-6 mb-3 mb-md-0">
                             <label>Ảnh chính <span class="text-danger">*</span></label>
                             <label class="custom-file-upload w-100">
-                                <img th:if="${product.mainImageUrl != null}" th:src="${product.mainImageUrl}" class="img-preview">
-                                <input type="file" name="imageFile" accept="image/*">
+                                <img th:if="${product.mainImageUrl != null}" th:src="${product.mainImageUrl}" class="img-preview" id="imagePreview">
+                                <img th:unless="${product.mainImageUrl != null}" src="" class="img-preview" id="imagePreview" style="display: none;">
+                                <input type="file" name="imageFile" accept="image/*" id="imageInput">
                                 <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                                 <span class="upload-text" style="font-weight: 600; font-size: 0.85rem; color: #444; margin-top: 5px;">Tải ảnh thay thế</span>
                             </label>
                             <div class="mt-2 text-center text-muted" style="font-size: 0.8rem; font-weight: 600;">HOẶC</div>
-                            <input type="text" th:field="*{mainImageUrl}" class="form-control mt-2" placeholder="Nhập URL ảnh chính">
+                            <input type="text" th:field="*{mainImageUrl}" id="imageUrlInput" class="form-control mt-2" placeholder="Nhập URL ảnh chính">
                         </div>
                         <div class="col-md-6">
                             <label>Ảnh phụ (Gallery)</label>
@@ -283,5 +288,45 @@
         </div>
     </form>
 </section>
+<th:block layout:fragment="scripts">
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const imageUrlInput = document.getElementById('imageUrlInput');
+        const imagePreview = document.getElementById('imagePreview');
+
+        function updatePreview(src) {
+            if (src) {
+                imagePreview.src = src;
+                imagePreview.style.display = 'block';
+            } else {
+                imagePreview.src = '';
+                imagePreview.style.display = 'none';
+            }
+        }
+
+        imageInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    updatePreview(e.target.result);
+                    imageUrlInput.value = ''; 
+                }
+                reader.readAsDataURL(this.files[0]);
+            } else {
+                updatePreview(imageUrlInput.value);
+            }
+        });
+
+        imageUrlInput.addEventListener('input', function(e) {
+            if (this.value) {
+                updatePreview(this.value);
+            } else {
+                if(!imageInput.files || !imageInput.files[0]) {
+                    imagePreview.style.display = 'none';
+                }
+            }
+        });
+    </script>
+</th:block>
 </body>
 </html>

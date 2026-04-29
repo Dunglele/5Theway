@@ -37,6 +37,14 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
     public org.springframework.data.domain.Page<User> searchAndPaginate(String keyword, int page, int size) {
         List<User> all = userRepository.findAll();
         String lowerKeyword = keyword != null ? keyword.toLowerCase() : "";
@@ -98,6 +106,10 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
+                user.isEnabled(),
+                true,
+                true,
+                true,
                 user.getRoles().stream()
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList())

@@ -70,7 +70,7 @@
                 <div sec:authorize="isAuthenticated()">
                     <li><a th:href="@{/Home/Profile}">Thông tin cá nhân</a></li>
                     <li><a th:href="@{/Home/Orders}">Lịch sử đơn hàng</a></li>
-                    <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a th:href="@{/admin}" style="color: var(--blue-main);">Quản trị hệ thống</a></li>
+                    <li sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_STAFF')"><a th:href="@{/admin}" style="color: var(--blue-main);">Quản trị hệ thống</a></li>
                     <li>
                         <form th:action="@{/logout}" method="post">
                             <button type="submit" style="background:none; border:none; padding: 12px 0; font-family:var(--font-display); font-size: 18px; color: var(--price-red); width: 100%; text-align: left;">Đăng xuất</button>
@@ -153,7 +153,7 @@
                         <div class="dropdown-header text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px; color: #999;">Thành viên</div>
                         <a class="dropdown-item py-2" th:href="@{/Home/Profile}" style="font-size: 0.9rem;">Thông tin cá nhân</a>
                         <a class="dropdown-item py-2" th:href="@{/Home/Orders}" style="font-size: 0.9rem;">Lịch sử đơn hàng</a>
-                        <div sec:authorize="hasAuthority('ROLE_ADMIN')">
+                        <div sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_STAFF')">
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item py-2 text-primary" th:href="@{/admin}" style="font-size: 0.9rem; font-weight: 600;">Quản trị hệ thống</a>
                         </div>
