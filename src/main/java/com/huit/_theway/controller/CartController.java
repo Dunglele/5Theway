@@ -64,8 +64,12 @@ public class CartController {
                             HttpSession session,
                             org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
         log.info("POST /Home/Cart/Add received for productId: {}, color: {}, size: {}", productId, color, size);
-        cartService.addToCart(productId, quantity, color, size, session);
-        ra.addFlashAttribute("successMsg", "Đã thêm sản phẩm vào giỏ hàng!");
+        boolean success = cartService.addToCart(productId, quantity, color, size, session);
+        if (success) {
+            ra.addFlashAttribute("successMsg", "Đã thêm sản phẩm vào giỏ hàng!");
+        } else {
+            ra.addFlashAttribute("errorMsg", "Xin lỗi, số lượng sản phẩm trong kho không đủ!");
+        }
         return "redirect:/Home/Cart";
     }
 
@@ -80,8 +84,12 @@ public class CartController {
     @PostMapping("/Update")
     public String updateQuantity(@RequestParam("productId") Long productId,
                                  @RequestParam("quantity") Integer quantity,
-                                 HttpSession session) {
-        cartService.updateQuantity(productId, quantity, session);
+                                 HttpSession session,
+                                 org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+        boolean success = cartService.updateQuantity(productId, quantity, session);
+        if (!success) {
+            ra.addFlashAttribute("errorMsg", "Xin lỗi, kho không đủ số lượng yêu cầu!");
+        }
         return "redirect:/Home/Cart";
     }
 }

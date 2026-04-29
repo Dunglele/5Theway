@@ -32,4 +32,27 @@ public class CouponService {
     public java.util.List<Coupon> getAllCoupons() {
         return couponRepository.findAll();
     }
+
+    public Coupon getCouponById(Long id) {
+        return couponRepository.findById(id).orElse(null);
+    }
+
+    public void deleteCoupon(Long id) {
+        couponRepository.deleteById(id);
+    }
+
+    public org.springframework.data.domain.Page<Coupon> searchAndPaginate(String keyword, int page, int size) {
+        java.util.List<Coupon> all = couponRepository.findAll();
+        String lowerKeyword = keyword != null ? keyword.toLowerCase() : "";
+        java.util.List<Coupon> filtered = all.stream()
+                .filter(c -> c.getCode().toLowerCase().contains(lowerKeyword))
+                .collect(java.util.stream.Collectors.toList());
+
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filtered.size());
+        java.util.List<Coupon> pageContent = (start <= end && start < filtered.size()) ? filtered.subList(start, end) : new java.util.ArrayList<>();
+
+        return new org.springframework.data.domain.PageImpl<>(pageContent, pageable, filtered.size());
+    }
 }

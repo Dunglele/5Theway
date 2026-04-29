@@ -48,6 +48,10 @@ public class ProductService {
     public List<Product> searchProducts(String keyword) {
         return productRepository.findByNameContainingIgnoreCase(keyword);
     }
+    
+    public List<Product> getLowStockProducts(int threshold) {
+        return productRepository.findByStockLessThan(threshold);
+    }
 
     public org.springframework.data.domain.Page<Product> searchProductsFiltered(String keyword, Double minPrice, Double maxPrice, String sort, String color, String status, int page, int size) {
         List<Product> products = productRepository.findByNameContainingIgnoreCase(keyword);

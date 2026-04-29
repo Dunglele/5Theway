@@ -81,6 +81,7 @@ public class AdminController {
             model.addAttribute("userCount", uCount);
             model.addAttribute("totalRevenue", revenue);
             model.addAttribute("orders", allOrders);
+            model.addAttribute("lowStockProducts", productService.getLowStockProducts(5));
         } catch (Exception e) {
             model.addAttribute("productCount", 0L);
             model.addAttribute("orderCount", 0L);

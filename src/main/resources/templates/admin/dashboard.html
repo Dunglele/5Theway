@@ -143,6 +143,31 @@
             </div>
         </div>
         <div class="col-lg-4">
+            <!-- Low Stock Warning -->
+            <div class="card border-0 shadow-sm mb-4" style="border-top: 4px solid #dc3545 !important;">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <span class="font-weight-bold text-danger" style="font-size: 0.85rem;"><i class="fas fa-exclamation-triangle mr-1"></i> SẮP HẾT HÀNG</span>
+                    <a th:href="@{/admin/products}" class="btn btn-sm btn-link text-dark p-0" style="font-size: 0.75rem;">XEM TẤT CẢ</a>
+                </div>
+                <div class="card-body p-0">
+                    <div th:if="${lowStockProducts == null or #lists.isEmpty(lowStockProducts)}" class="p-3 text-center text-muted small">
+                        Kho hàng ổn định.
+                    </div>
+                    <ul class="list-group list-group-flush" th:if="${lowStockProducts != null and !#lists.isEmpty(lowStockProducts)}">
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-2" th:each="p, iter : ${lowStockProducts}" th:if="${iter.index < 5}">
+                            <div class="d-flex align-items-center">
+                                <img th:src="${p.mainImageUrl}" th:if="${p.mainImageUrl}" width="36" height="36" class="rounded mr-2" style="object-fit: cover;">
+                                <div>
+                                    <h6 class="mb-0 text-truncate" style="max-width: 140px; font-size: 0.8rem; font-weight: 700;" th:text="${p.name}">Tên SP</h6>
+                                    <small class="text-muted" style="font-size: 0.7rem;" th:text="${p.category != null ? p.category.name : ''}">Danh mục</small>
+                                </div>
+                            </div>
+                            <span class="badge badge-danger font-weight-bold" th:text="'Còn ' + ${p.stock}">Còn 2</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-header">TRẠNG THÁI HỆ THỐNG</div>
                 <div class="card-body">

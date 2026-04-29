@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{admin/layout}">
+<head>
+    <title>Quản lý Mã giảm giá - Admin</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h2 style="font-weight: 800; letter-spacing: -1px;">QUẢN LÝ MÃ GIẢM GIÁ</h2>
+            <p class="text-muted small m-0">Tạo mới, cập nhật và quản lý các mã khuyến mãi (Coupons).</p>
+        </div>
+        <div class="d-flex">
+            <form method="get" class="form-inline m-0 mr-2">
+                <input type="text" name="keyword" th:value="${keyword}" class="form-control mr-2" placeholder="Tìm mã...">
+                <button class="btn btn-outline-dark" type="submit">Tìm</button>
+            </form>
+            <a th:href="@{/admin/coupons/add}" class="btn btn-dark" style="font-weight: bold;">+ THÊM MÃ</a>
+        </div>
+    </div>
+
+    <div th:if="${successMsg}" class="alert alert-success font-weight-bold" th:text="${successMsg}"></div>
+    <div th:if="${errorMsg}" class="alert alert-danger font-weight-bold" th:text="${errorMsg}"></div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="pl-4">Mã CODE</th>
+                            <th>Mức giảm</th>
+                            <th>Đơn tối thiểu</th>
+                            <th>Ngày hết hạn</th>
+                            <th>Trạng thái</th>
+                            <th class="text-right pr-4">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${coupons == null or #lists.isEmpty(coupons)}">
+                            <td colspan="6" class="text-center p-4 text-muted">Chưa có mã giảm giá nào.</td>
+                        </tr>
+                        <tr th:each="c : ${coupons}">
+                            <td class="pl-4">
+                                <span class="badge badge-dark p-2" style="font-size: 0.9rem; letter-spacing: 1px;" th:text="${c.code}">CODE</span>
+                            </td>
+                            <td>
+                                <span class="font-weight-bold text-success" th:text="${c.discountType == 'PERCENTAGE' ? c.discountValue + '%' : #numbers.formatDecimal(c.discountValue, 0, 'POINT', 0, 'POINT') + 'đ'}">Giá trị</span>
+                            </td>
+                            <td th:text="${#numbers.formatDecimal(c.minOrderAmount != null ? c.minOrderAmount : 0, 0, 'POINT', 0, 'POINT')} + 'đ'">Min</td>
+                            <td>
+                                <span th:if="${c.expiryDate != null}" th:text="${#temporals.format(c.expiryDate, 'dd/MM/yyyy HH:mm')}">Date</span>
+                                <span th:unless="${c.expiryDate != null}" class="text-muted">Không giới hạn</span>
+                            </td>
+                            <td>
+                                <span class="badge" th:classappend="${c.active and !c.isExpired() ? 'badge-success' : 'badge-danger'}"
+                                      th:text="${c.active and !c.isExpired() ? 'HOẠT ĐỘNG' : (c.isExpired() ? 'HẾT HẠN' : 'VÔ HIỆU')}">Status</span>
+                            </td>
+                            <td class="text-right pr-4">
+                                <div class="action-btns">
+                                    <a th:href="@{'/admin/coupons/edit/' + ${c.id}}" class="btn-action" title="Sửa">
+                                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 00 2 2h11a2 2 0 00 2-2v-5m-1.414-9.414a2 2 0 1 1 2.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                    </a>
+                                    <a th:href="@{'/admin/coupons/delete/' + ${c.id}}" class="btn-action btn-action-delete" title="Xóa" 
+                                       onclick="return confirm('Bạn có chắc chắn muốn xóa mã giảm giá này?')">
+                                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <nav th:if="${totalPages > 1}" class="mt-4 mb-3">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{''(keyword=${keyword}, page=${currentPage - 1})}">Trang trước</a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${currentPage == i ? 'active' : ''}">
+                        <a class="page-link" th:href="@{''(keyword=${keyword}, page=${i})}" th:text="${i}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{''(keyword=${keyword}, page=${currentPage + 1})}">Trang sau</a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+</section>
+</body>
+</html>

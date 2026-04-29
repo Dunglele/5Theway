@@ -32,12 +32,17 @@ public class CartService {
         return cart;
     }
 
-    public void addToCart(Long productId, Integer quantity, String color, String size, HttpSession session) {
+    public boolean addToCart(Long productId, Integer quantity, String color, String size, HttpSession session) {
         log.info("Adding product {} (color: {}, size: {}) with quantity {} to cart.", productId, color, size, quantity);
         Map<Long, CartItem> cart = getCart(session);
         Product product = productService.getProductById(productId);
         
         if (product != null) {
+            int currentQtyInCart = cart.containsKey(productId) ? cart.get(productId).getQuantity() : 0;
+            if (currentQtyInCart + quantity > product.getStock()) {
+                return false; // Not enough stock
+            }
+
             Double activePrice = (product.getSalePrice() != null) ? product.getSalePrice() : product.getPrice();
             
             // Để đơn giản, ta vẫn dùng productId làm key. 
@@ -60,19 +65,27 @@ public class CartService {
                 cart.put(productId, item);
             }
             session.setAttribute(CART_SESSION_KEY, cart);
+            return true;
         }
+        return false;
     }
 
-    public void updateQuantity(Long productId, Integer quantity, HttpSession session) {
+    public boolean updateQuantity(Long productId, Integer quantity, HttpSession session) {
         Map<Long, CartItem> cart = getCart(session);
-        if (cart.containsKey(productId)) {
+        Product product = productService.getProductById(productId);
+        if (cart.containsKey(productId) && product != null) {
             if (quantity <= 0) {
                 cart.remove(productId);
             } else {
+                if (quantity > product.getStock()) {
+                    return false;
+                }
                 cart.get(productId).setQuantity(quantity);
             }
             session.setAttribute(CART_SESSION_KEY, cart);
+            return true;
         }
+        return false;
     }
 
     public void removeFromCart(Long productId, HttpSession session) {
