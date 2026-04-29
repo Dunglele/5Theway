@@ -33,7 +33,11 @@ public class OrderService {
             order.setUser(user);
         }
 
-        order.setStatus("PENDING");
+        if ("COD".equals(order.getPaymentMethod())) {
+            order.setStatus("CONFIRMED"); // Đơn tiền mặt tự động xác nhận
+        } else {
+            order.setStatus("PENDING"); // Đơn chuyển khoản chờ duyệt tiền
+        }
         Order savedOrder = orderRepository.save(order);
 
         List<OrderItem> items = new ArrayList<>();
@@ -82,13 +86,31 @@ public class OrderService {
         return false;
     }
 
-    public org.springframework.data.domain.Page<Order> searchAndPaginate(String keyword, int page, int size) {
+    public org.springframework.data.domain.Page<Order> searchAndPaginate(String keyword, String status, String date, int page, int size) {
         List<Order> all = orderRepository.findAll();
         String lowerKeyword = keyword != null ? keyword.toLowerCase() : "";
+        
+        java.time.LocalDate filterDate = null;
+        if (date != null && !date.trim().isEmpty()) {
+            try {
+                filterDate = java.time.LocalDate.parse(date);
+            } catch (Exception e) {
+                // Ignore parse error
+            }
+        }
+        final java.time.LocalDate finalFilterDate = filterDate;
+        
         List<Order> filtered = all.stream()
-                .filter(o -> o.getId().toString().contains(lowerKeyword) || 
-                             (o.getFullName() != null && o.getFullName().toLowerCase().contains(lowerKeyword)) ||
-                             (o.getPhoneNumber() != null && o.getPhoneNumber().contains(lowerKeyword)))
+                .filter(o -> {
+                    boolean matchKeyword = lowerKeyword.isEmpty() ||
+                            o.getId().toString().contains(lowerKeyword) || 
+                            (o.getFullName() != null && o.getFullName().toLowerCase().contains(lowerKeyword)) ||
+                            (o.getPhoneNumber() != null && o.getPhoneNumber().contains(lowerKeyword));
+                    boolean matchStatus = status == null || status.isEmpty() || status.equals(o.getStatus());
+                    boolean matchDate = finalFilterDate == null || (o.getCreatedAt() != null && o.getCreatedAt().toLocalDate().equals(finalFilterDate));
+                    
+                    return matchKeyword && matchStatus && matchDate;
+                })
                 .collect(java.util.stream.Collectors.toList());
 
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);

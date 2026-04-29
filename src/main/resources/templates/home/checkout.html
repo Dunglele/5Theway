@@ -112,6 +112,18 @@
                                             <span class="pay-method-name">Chuyển khoản</span>
                                         </label>
                                     </div>
+                                    
+                                    <!-- Bank Transfer Info -->
+                                    <div id="bankInfo" class="mt-4 p-4 border rounded" style="display: none; background: #fff; text-align: center;">
+                                        <h6 class="font-weight-bold mb-3" style="letter-spacing: 1px;">QUÉT MÃ QR ĐỂ THANH TOÁN</h6>
+                                        <img src="/assets/images/vcb.jpg" alt="Vietcombank QR" class="img-fluid rounded border mb-3 d-block mx-auto" style="max-width: 250px;">
+                                        <div class="small text-muted">
+                                            <p class="mb-1">Ngân hàng: <strong>Vietcombank (VCB)</strong></p>
+                                            <p class="mb-1">Chủ tài khoản: <strong>LÊ ĐỖ QUANG DŨNG</strong></p>
+                                            <p class="mb-1">Số tài khoản: <strong>1024220869</strong></p>
+                                            <p class="mb-0 text-danger mt-2">Nội dung CK: <strong th:text="${'TT ' + (currentUser != null ? currentUser.username : 'DONHANG')}"></strong></p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -172,7 +184,16 @@
         function selectPay(element) {
             document.querySelectorAll('.pay-method-item').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
-            element.querySelector('input').checked = true;
+            let radio = element.querySelector('input');
+            radio.checked = true;
+            
+            // Show/hide bank info
+            const bankInfo = document.getElementById('bankInfo');
+            if (radio.value === 'BANK') {
+                bankInfo.style.display = 'block';
+            } else {
+                bankInfo.style.display = 'none';
+            }
         }
 
         // Autocomplete logic

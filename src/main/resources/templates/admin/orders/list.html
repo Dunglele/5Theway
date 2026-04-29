@@ -13,8 +13,17 @@
             <p class="text-muted small m-0">Cập nhật trạng thái và theo dõi lịch sử mua hàng của khách.</p>
         </div>
         <form method="get" class="form-inline m-0">
+            <input type="date" name="date" th:value="${date}" class="form-control mr-2" title="Lọc theo ngày đặt">
+            <select name="status" class="form-control mr-2">
+                <option value="">Tất cả trạng thái</option>
+                <option value="PENDING" th:selected="${status == 'PENDING'}">Chờ duyệt</option>
+                <option value="CONFIRMED" th:selected="${status == 'CONFIRMED'}">Đã xác nhận</option>
+                <option value="SHIPPING" th:selected="${status == 'SHIPPING'}">Đang giao</option>
+                <option value="COMPLETED" th:selected="${status == 'COMPLETED'}">Hoàn thành</option>
+                <option value="CANCELLED" th:selected="${status == 'CANCELLED'}">Đã hủy</option>
+            </select>
             <input type="text" name="keyword" th:value="${keyword}" class="form-control mr-2" placeholder="Tìm kiếm mã hoặc tên...">
-            <button class="btn btn-outline-dark" type="submit">Tìm</button>
+            <button class="btn btn-dark" type="submit" style="font-weight: bold;">Lọc</button>
         </form>
     </div>
 
@@ -44,23 +53,34 @@
                             <td style="font-weight: 600;" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</td>
                             <td class="small" th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">Date</td>
                             <td>
-                                <span class="badge badge-admin" 
+                                <span class="badge badge-admin mb-1" 
                                       th:classappend="${order.status == 'PENDING' ? 'badge-warning' : (order.status == 'COMPLETED' ? 'badge-success' : (order.status == 'CANCELLED' ? 'badge-danger' : 'badge-info'))}"
                                       th:text="${order.status}">STATUS</span>
+                                <div class="small font-weight-bold mt-1" th:classappend="${order.paymentMethod == 'BANK' ? 'text-primary' : 'text-success'}">
+                                    <span th:text="${order.paymentMethod == 'BANK' ? '💳 CHUYỂN KHOẢN' : '💵 TIỀN MẶT'}">Phương thức</span>
+                                </div>
                             </td>
                             <td class="text-right pr-4">
                                 <form th:action="@{/admin/orders/update-status}" method="post" class="d-inline-block">
                                     <input type="hidden" name="orderId" th:value="${order.id}">
-                                    <select name="status" class="form-control form-control-sm d-inline-block w-auto border-dark" 
-                                            style="font-weight: 700; font-size: 0.75rem;"
-                                            onchange="this.form.submit()"
-                                            th:disabled="${order.status == 'CANCELLED' or order.status == 'COMPLETED'}">
-                                        <option value="PENDING" th:selected="${order.status == 'PENDING'}">CHỜ DUYỆT</option>
-                                        <option value="CONFIRMED" th:selected="${order.status == 'CONFIRMED'}">XÁC NHẬN</option>
-                                        <option value="SHIPPING" th:selected="${order.status == 'SHIPPING'}">ĐANG GIAO</option>
-                                        <option value="COMPLETED" th:selected="${order.status == 'COMPLETED'}">HOÀN THÀNH</option>
-                                        <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">HỦY ĐƠN</option>
-                                    </select>
+                                    
+                                    <th:block th:if="${order.paymentMethod == 'BANK' and order.status == 'PENDING'}">
+                                        <button type="submit" name="status" value="CONFIRMED" class="btn btn-sm btn-outline-success font-weight-bold mb-1 d-block">DUYỆT ĐÃ NHẬN TIỀN</button>
+                                        <button type="submit" name="status" value="CANCELLED" class="btn btn-sm btn-outline-danger font-weight-bold w-100">HỦY ĐƠN</button>
+                                    </th:block>
+                                    
+                                    <th:block th:unless="${order.paymentMethod == 'BANK' and order.status == 'PENDING'}">
+                                        <select name="status" class="form-control form-control-sm d-inline-block w-auto border-dark" 
+                                                style="font-weight: 700; font-size: 0.75rem;"
+                                                onchange="this.form.submit()"
+                                                th:disabled="${order.status == 'CANCELLED' or order.status == 'COMPLETED'}">
+                                            <option value="PENDING" th:selected="${order.status == 'PENDING'}">CHỜ DUYỆT</option>
+                                            <option value="CONFIRMED" th:selected="${order.status == 'CONFIRMED'}">ĐÃ XÁC NHẬN</option>
+                                            <option value="SHIPPING" th:selected="${order.status == 'SHIPPING'}">ĐANG GIAO</option>
+                                            <option value="COMPLETED" th:selected="${order.status == 'COMPLETED'}">HOÀN THÀNH</option>
+                                            <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">HỦY ĐƠN</option>
+                                        </select>
+                                    </th:block>
                                 </form>
                             </td>
                         </tr>
@@ -71,13 +91,13 @@
             <nav th:if="${totalPages > 1}" class="mt-4 mb-3">
                 <ul class="pagination justify-content-center">
                     <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{''(keyword=${keyword}, page=${currentPage - 1})}">Trang trước</a>
+                        <a class="page-link" th:href="@{''(keyword=${keyword}, status=${status}, date=${date}, page=${currentPage - 1})}">Trang trước</a>
                     </li>
                     <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${currentPage == i ? 'active' : ''}">
-                        <a class="page-link" th:href="@{''(keyword=${keyword}, page=${i})}" th:text="${i}">1</a>
+                        <a class="page-link" th:href="@{''(keyword=${keyword}, status=${status}, date=${date}, page=${i})}" th:text="${i}">1</a>
                     </li>
                     <li class="page-item" th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{''(keyword=${keyword}, page=${currentPage + 1})}">Trang sau</a>
+                        <a class="page-link" th:href="@{''(keyword=${keyword}, status=${status}, date=${date}, page=${currentPage + 1})}">Trang sau</a>
                     </li>
                 </ul>
             </nav>

@@ -98,6 +98,15 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
+    @Transactional
+    public void adminChangePassword(Long userId, String newPassword) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+        }
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)

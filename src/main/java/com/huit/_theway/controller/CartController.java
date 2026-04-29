@@ -17,13 +17,43 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
 
     private final CartService cartService;
+    private final com.huit._theway.service.CouponService couponService;
 
     @GetMapping("")
     public String viewCart(HttpSession session, Model model) {
         log.info("Viewing cart. Items count: {}", cartService.getCount(session));
         model.addAttribute("cartItems", cartService.getCart(session).values());
-        model.addAttribute("totalAmount", cartService.getTotalAmount(session));
+        
+        Double totalAmount = cartService.getTotalAmount(session);
+        com.huit._theway.model.Coupon appliedCoupon = (com.huit._theway.model.Coupon) session.getAttribute("appliedCoupon");
+        double discount = 0.0;
+        if (appliedCoupon != null) {
+            if ("PERCENTAGE".equals(appliedCoupon.getDiscountType())) {
+                discount = totalAmount * (appliedCoupon.getDiscountValue() / 100);
+            } else {
+                discount = appliedCoupon.getDiscountValue();
+            }
+        }
+        
+        model.addAttribute("totalAmount", totalAmount);
+        model.addAttribute("discount", discount);
         return "home/cart";
+    }
+
+    @PostMapping("/ApplyCoupon")
+    public String applyCoupon(@RequestParam("couponCode") String code, 
+                               HttpSession session, 
+                               org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+        Double totalAmount = cartService.getTotalAmount(session);
+        com.huit._theway.model.Coupon coupon = couponService.validateCoupon(code, totalAmount);
+        
+        if (coupon != null) {
+            session.setAttribute("appliedCoupon", coupon);
+            ra.addFlashAttribute("couponSuccess", "Áp dụng mã giảm giá thành công!");
+        } else {
+            ra.addFlashAttribute("couponError", "Mã giảm giá không hợp lệ hoặc không đủ điều kiện.");
+        }
+        return "redirect:/Home/Cart";
     }
 
     @PostMapping("/Add")

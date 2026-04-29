@@ -256,22 +256,37 @@ public class AdminController {
     }
 
     @PostMapping("/users/toggle-status")
-    public String toggleUserStatus(@RequestParam("userId") Long userId) {
+    public String toggleUserStatus(@RequestParam("userId") Long userId, org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
         userService.toggleUserStatus(userId);
         auditLogService.logAction("TOGGLE_STATUS", "User", String.valueOf(userId), "Thay đổi trạng thái tài khoản");
+        ra.addFlashAttribute("successMsg", "Cập nhật trạng thái người dùng thành công!");
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/change-password")
+    public String changeUserPassword(@RequestParam("userId") Long userId, 
+                                     @RequestParam("newPassword") String newPassword, 
+                                     org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+        userService.adminChangePassword(userId, newPassword);
+        auditLogService.logAction("CHANGE_PASSWORD", "User", String.valueOf(userId), "Admin đổi mật khẩu cho User ID: " + userId);
+        ra.addFlashAttribute("successMsg", "Đổi mật khẩu thành công!");
         return "redirect:/admin/users";
     }
 
     // --- QUẢN LÝ ĐƠN HÀNG ---
     @GetMapping("/orders")
     public String listOrders(@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+                             @RequestParam(value = "status", required = false, defaultValue = "") String status,
+                             @RequestParam(value = "date", required = false, defaultValue = "") String date,
                              @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                              Model model) {
-        org.springframework.data.domain.Page<Order> orderPage = orderService.searchAndPaginate(keyword, page - 1, 10);
+        org.springframework.data.domain.Page<Order> orderPage = orderService.searchAndPaginate(keyword, status, date, page - 1, 10);
         model.addAttribute("orders", orderPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", orderPage.getTotalPages());
         model.addAttribute("keyword", keyword);
+        model.addAttribute("status", status);
+        model.addAttribute("date", date);
         return "admin/orders/list";
     }
 

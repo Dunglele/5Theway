@@ -55,13 +55,41 @@
                                 <span th:if="${user.enabled}" class="text-success small font-weight-bold">● Đang hoạt động</span>
                                 <span th:unless="${user.enabled}" class="text-danger small font-weight-bold">● Đã khóa</span>
                             </td>
-                            <td class="text-right pr-4">
-                                <form th:action="@{/admin/users/toggle-status}" method="post">
+                            <td class="text-right pr-4 d-flex justify-content-end align-items-center">
+                                <button class="btn btn-sm btn-outline-primary mr-2 font-weight-bold" data-toggle="modal" th:attr="data-target='#changePasswordModal' + ${user.id}">ĐỔI MK</button>
+                                <form th:action="@{/admin/users/toggle-status}" method="post" class="m-0">
                                     <input type="hidden" name="userId" th:value="${user.id}">
                                     <button type="submit" class="btn btn-sm font-weight-bold" 
                                             th:classappend="${user.enabled ? 'btn-outline-danger' : 'btn-outline-success'}"
                                             th:text="${user.enabled ? 'KHÓA' : 'MỞ KHÓA'}">Action</button>
                                 </form>
+                                
+                                <!-- Modal Đổi mật khẩu -->
+                                <div class="modal fade" th:id="'changePasswordModal' + ${user.id}" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content text-left">
+                                            <form th:action="@{/admin/users/change-password}" method="post">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title font-weight-bold">Đổi mật khẩu: <span th:text="${user.username}"></span></h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="userId" th:value="${user.id}">
+                                                    <div class="form-group">
+                                                        <label>Mật khẩu mới</label>
+                                                        <input type="password" name="newPassword" class="form-control" required minlength="6" placeholder="Nhập mật khẩu mới (ít nhất 6 ký tự)">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                                    <button type="submit" class="btn btn-dark">Lưu Mật Khẩu</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     </tbody>

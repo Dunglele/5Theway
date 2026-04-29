@@ -211,10 +211,27 @@
                             </div>
                         </div>
 
+                        <form th:action="@{/Home/Cart/ApplyCoupon}" method="post" class="mb-4">
+                            <div class="input-group">
+                                <input type="text" name="couponCode" class="form-control" placeholder="Nhập mã giảm giá..." required style="height: 44px; border-radius: 2px;">
+                                <div class="input-group-append">
+                                    <button class="btn btn-dark" type="submit" style="border-radius: 2px; padding: 0 20px; font-weight: 700; letter-spacing: 1px;">ÁP DỤNG</button>
+                                </div>
+                            </div>
+                            <div th:if="${couponSuccess}" class="text-success small mt-2 font-weight-bold" th:text="${couponSuccess}"></div>
+                            <div th:if="${couponError}" class="text-danger small mt-2 font-weight-bold" th:text="${couponError}"></div>
+                        </form>
+
                         <div class="summary-row">
                             <span>Tạm tính</span>
                             <span th:text="${#numbers.formatDecimal(totalAmount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
                         </div>
+                        
+                        <div class="summary-row" th:if="${discount != null and discount > 0}">
+                            <span>Giảm giá</span>
+                            <span class="text-success font-weight-bold" th:text="'-' + ${#numbers.formatDecimal(discount, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                        </div>
+                        
                         <div class="summary-row">
                             <span>Phí vận chuyển</span>
                             <span th:text="${totalAmount >= 500000 ? 'MIỄN PHÍ' : '30.000đ'}">0đ</span>
@@ -222,7 +239,7 @@
                         
                         <div class="summary-row total">
                             <span>TỔNG CỘNG</span>
-                            <span th:text="${#numbers.formatDecimal(totalAmount >= 500000 ? totalAmount : totalAmount + 30000, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
+                            <span th:text="${#numbers.formatDecimal(totalAmount - discount + (totalAmount >= 500000 ? 0 : 30000), 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
                         </div>
                         
                         <a th:href="@{/Home/Checkout}" class="btn-checkout">TIẾN HÀNH THANH TOÁN</a>
