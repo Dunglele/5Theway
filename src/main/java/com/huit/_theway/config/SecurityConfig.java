@@ -25,7 +25,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/Home/**", "/assets/**", "/login", "/register", "/403", "/error", "/favicon.ico").permitAll()
+                .requestMatchers("/", "/Home/**", "/assets/**", "/api/products/**", "/login", "/register", "/403", "/error", "/favicon.ico").permitAll()
                 .requestMatchers("/admin/users/**", "/admin/settings/**", "/admin/audit-logs/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
                 .anyRequest().authenticated()
@@ -39,6 +39,11 @@ public class SecurityConfig {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
                 .permitAll()
+            )
+            .rememberMe(remember -> remember
+                .key("5TheWaySecretKey123!") // Khóa bảo mật để mã hóa token
+                .rememberMeParameter("remember-me") // Tên tham số từ checkbox
+                .tokenValiditySeconds(86400 * 14) // Thời gian nhớ (14 ngày)
             )
             .exceptionHandling(ex -> ex
                 .accessDeniedPage("/403") // Trang báo lỗi khi không có quyền truy cập

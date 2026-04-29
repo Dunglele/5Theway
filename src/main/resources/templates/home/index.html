@@ -136,12 +136,17 @@
                 <div class="feature-layout__right">
                     <th:block th:each="product, iter : ${category1Products}" th:if="${iter.index >= 1 and iter.index <= 4}">
                         <article class="product-card">
-                            <a th:href="@{'/Home/Product/' + ${product.id}}" class="product-card__img-wrap d-block">
+                            <div class="product-card__img-wrap d-block"><a th:href="@{'/Home/Product/' + ${product.id}}">
                                 <img th:src="${product.mainImageUrl}" th:alt="${product.name}" loading="lazy" />
                                 <span th:if="${product.stock < 15}" class="product-card__badge badge-low">Sắp hết</span>
                                 <span th:if="${product.newArrival}" class="product-card__badge badge-new" th:unless="${product.stock < 15}">New</span>
                             </a>
-                            <div class="product-card__body">
+                                    <button type="button" class="quick-view-btn" th:onclick="'openQuickView(' + ${product.id} + ')'">
+                                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c3.55 0 6.715 1.832 8.542 4.636a2 2 0 010 2.728C18.715 15.168 15.55 17 12 17c-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        Xem nhanh
+                                    </button>
+                                </div>
+                                <div class="product-card__body">
                                 <h3 class="product-card__name" th:text="${product.name}">Product Name</h3>
                                 <div class="product-card__price-row">
                                     <span class="product-card__price" th:text="${#numbers.formatDecimal(product.salePrice != null ? product.salePrice : product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
@@ -164,11 +169,16 @@
             <div class="products-grid grid-4 mt-4" th:if="${#lists.size(category1Products) > 5}">
                 <th:block th:each="product, iter : ${category1Products}" th:if="${iter.index >= 5}">
                     <article class="product-card">
-                        <a th:href="@{'/Home/Product/' + ${product.id}}" class="product-card__img-wrap d-block">
+                        <div class="product-card__img-wrap d-block"><a th:href="@{'/Home/Product/' + ${product.id}}">
                             <img th:src="${product.mainImageUrl}" th:alt="${product.name}" loading="lazy" />
                             <span th:if="${product.stock < 15}" class="product-card__badge badge-low">Sắp hết</span>
                         </a>
-                        <div class="product-card__body">
+                                    <button type="button" class="quick-view-btn" th:onclick="'openQuickView(' + ${product.id} + ')'">
+                                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c3.55 0 6.715 1.832 8.542 4.636a2 2 0 010 2.728C18.715 15.168 15.55 17 12 17c-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        Xem nhanh
+                                    </button>
+                                </div>
+                                <div class="product-card__body">
                             <h3 class="product-card__name" th:text="${product.name}">Product Name</h3>
                             <div class="product-card__price-row">
                                 <span class="product-card__price" th:text="${#numbers.formatDecimal(product.salePrice != null ? product.salePrice : product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
@@ -298,11 +308,16 @@
                 <div class="feature-layout__right">
                     <th:block th:each="product, iter : ${category2Products}" th:if="${iter.index >= 1 and iter.index <= 4}">
                         <article class="product-card">
-                            <a th:href="@{'/Home/Product/' + ${product.id}}" class="product-card__img-wrap d-block">
+                            <div class="product-card__img-wrap d-block"><a th:href="@{'/Home/Product/' + ${product.id}}">
                                 <img th:src="${product.mainImageUrl}" th:alt="${product.name}" loading="lazy" />
                                 <span th:if="${product.newArrival}" class="product-card__badge badge-new">New</span>
                             </a>
-                            <div class="product-card__body">
+                                    <button type="button" class="quick-view-btn" th:onclick="'openQuickView(' + ${product.id} + ')'">
+                                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c3.55 0 6.715 1.832 8.542 4.636a2 2 0 010 2.728C18.715 15.168 15.55 17 12 17c-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        Xem nhanh
+                                    </button>
+                                </div>
+                                <div class="product-card__body">
                                 <h3 class="product-card__name" th:text="${product.name}">Product Name</h3>
                                 <div class="product-card__price-row">
                                     <span class="product-card__price" th:text="${#numbers.formatDecimal(product.salePrice != null ? product.salePrice : product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
@@ -325,10 +340,15 @@
             <div class="products-grid grid-4 mt-4" th:if="${#lists.size(category2Products) > 5}">
                 <th:block th:each="product, iter : ${category2Products}" th:if="${iter.index >= 5}">
                     <article class="product-card">
-                        <a th:href="@{'/Home/Product/' + ${product.id}}" class="product-card__img-wrap d-block">
+                        <div class="product-card__img-wrap d-block"><a th:href="@{'/Home/Product/' + ${product.id}}">
                             <img th:src="${product.mainImageUrl}" th:alt="${product.name}" loading="lazy" />
                         </a>
-                        <div class="product-card__body">
+                                    <button type="button" class="quick-view-btn" th:onclick="'openQuickView(' + ${product.id} + ')'">
+                                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c3.55 0 6.715 1.832 8.542 4.636a2 2 0 010 2.728C18.715 15.168 15.55 17 12 17c-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        Xem nhanh
+                                    </button>
+                                </div>
+                                <div class="product-card__body">
                             <h3 class="product-card__name" th:text="${product.name}">Product Name</h3>
                             <div class="product-card__price-row">
                                 <span class="product-card__price" th:text="${#numbers.formatDecimal(product.salePrice != null ? product.salePrice : product.price, 0, 'POINT', 0, 'POINT')} + 'đ'">0đ</span>
