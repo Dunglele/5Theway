@@ -20,6 +20,7 @@
     <li><a href="#-hướng-dẫn-cài-đặt">Hướng dẫn cài đặt</a></li>
   </ol>
 </details>
+<img width="1806" height="959" alt="image" src="https://github.com/user-attachments/assets/3709ce6b-7fdf-4cf5-80b9-dcf3a3217377" />
 
 ## 🚀 Giới thiệu
 
